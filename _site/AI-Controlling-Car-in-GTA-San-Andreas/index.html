@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>AI Controlling Car in GTA San Andreas - Machine Learning Blogs</title>
+
+  <!-- Edit site and author settings in `_config.yml` to make the social details your own -->
+
+    <meta content="Machine Learning Blogs" property="og:site_name">
+  
+    <meta content="AI Controlling Car in GTA San Andreas" property="og:title">
+  
+  
+    <meta content="article" property="og:type">
+  
+  
+    <meta content="The Objective of the project is to use Artificial Intelligence to drive a car automatically in GTA San Andreas game." property="og:description">
+  
+  
+    <meta content="http://localhost:4000/AI-Controlling-Car-in-GTA-San-Andreas/" property="og:url">
+  
+  
+    <meta content="2019-09-17T16:02:20+05:30" property="article:published_time">
+    <meta content="http://localhost:4000/about/" property="article:author">
+  
+  
+    <meta content="http://localhost:4000/ml-blog/assets/img/david-freeman.jpg" property="og:image">
+  
+  
+    
+  
+  
+    
+    <meta content="Machine Learning" property="article:tag">
+    
+    <meta content="Computer Vision" property="article:tag">
+    
+  
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@">
+    <meta name="twitter:creator" content="@">
+  
+    <meta name="twitter:title" content="AI Controlling Car in GTA San Andreas">
+  
+  
+    <meta name="twitter:url" content="http://localhost:4000/AI-Controlling-Car-in-GTA-San-Andreas/">
+  
+  
+    <meta name="twitter:description" content="The Objective of the project is to use Artificial Intelligence to drive a car automatically in GTA San Andreas game.">
+  
+  
+    <meta name="twitter:image:src" content="http://localhost:4000/ml-blog/assets/img/david-freeman.jpg">
+  
+
+	<meta name="description" content="The Objective of the project is to use Artificial Intelligence to drive a car automatically in GTA San Andreas game.">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta property="og:image" content="">
+	<link rel="shortcut icon" href="/ml-blog/assets/img/favicon/favicon.ico" type="image/x-icon">
+	<link rel="apple-touch-icon" href="/ml-blog/assets/img/favicon/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/ml-blog/assets/img/favicon/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/ml-blog/assets/img/favicon/apple-touch-icon-144x144.png">
+	<!-- Chrome, Firefox OS and Opera -->
+	<meta name="theme-color" content="#263959">
+	<!-- Windows Phone -->
+	<meta name="msapplication-navbutton-color" content="#263959">
+	<!-- iOS Safari -->
+	<meta name="apple-mobile-web-app-status-bar-style" content="#263959">
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=PT+Serif:400,700|Lato:300,400,700&display=swap" rel="stylesheet">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="/ml-blog/assets/fonts/font-awesome/css/font-awesome.min.css">
+	<!-- Styles -->
+	<link rel="stylesheet" href="/ml-blog/assets/css/main.css">
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <aside class="sidebar">
+  <header>
+    <div class="about">
+      <div class="cover-author-image">
+        <a href="/ml-blog/"><img src="/ml-blog/assets/img/david-freeman.jpg" alt="Jithin J"></a>
+      </div>
+      <div class="author-name">Jithin J</div>
+      <p>Machine Learning Engineer. Interested in Machine Learning and Deep Learning.</p>
+    </div>
+  </header> <!-- End Header -->
+  <footer>
+    <section class="contact">
+      <h3 class="contact-title">Contact me</h3>
+      <ul>
+        
+          <li class="github"><a href="http://github.com/bitmask93" target="_blank"><i class="fa fa-github"></i></a></li>
+        
+        
+          <li class="linkedin"><a href="https://in.linkedin.com/in/jithin-j-a5b662170" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        
+        
+          <li class="email"><a href="mailto:jithinjayan1993@gmail.com"><i class="fa fa-envelope-o"></i></a></li>
+        
+      </ul>
+    </section> <!-- End Section Contact -->
+    <div class="copyright">
+      <p>2020 &copy; Jithin J</p>
+    </div>
+  </footer> <!-- End Footer -->
+</aside> <!-- End Sidebar -->
+<div class="content-box clearfix">
+  <article class="article-page">
+  <div class="page-content">
+    
+    
+    <div class="wrap-content">
+      <header class="header-page">
+        <h1 class="page-title">AI Controlling Car in GTA San Andreas</h1>
+        <div class="page-date"><span>2019, Sep 17&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+      </header>
+      <h2 id="objective-">Objective :</h2>
+
+<p>The Objective of the project is to use Artificial Intelligence to drive a car automatically in GTA San Andreas game.</p>
+
+<h2 id="introduction-">Introduction :</h2>
+
+<p>Machine learning models can learn a lot from most of the gaming environment especially considering the fact that most of the modern day games are more realistic and they resemble that of the real world. For this problem I chose GTA San Andreas game. The reason why I chose this game is because the traffic and roads resemble that of a real world situation. There are high traffic areas, low traffic areas and also people walking in the streets and also different weather conditions and also there is night and day time, which is perfect for training a machine learning model.</p>
+
+<p><strong>Inputs</strong> :</p>
+
+<p>The inputs to the model are visual data along with the directional key pressed in each frame. A 35 minute video of gameplay recorded at 30 fps along with the directional key pressed in each frame are the inputs. However GTA game is more than about driving a car, for this specific problem I used the information of driving the car around various regions of GTA San Andreas that are accessible. In this game, a minute = 1 hour in real time. So I used 35 minute gameplay so I could get both night as well as day time.</p>
+
+<p><strong>Output :</strong></p>
+
+<p>The output from the model is the key to be pressed. There are 9 possible key combinations possible while driving a car in game they are : U(UP),D(Down),L(Left),R(Right), None and combinations of them they are: LU,LR,DL and DR. So totally we have 9 different classes which the model should learn and output.</p>
+
+<p><strong>Model Used</strong>:</p>
+
+<p>The first algorithm that comes into mind when hearing about Image classification is Convolutional Neural Network. For this one too I used a CNN model. However building a CNN model from scratch for this project is expensive cos there are around 70k image frames and it takes too much time to train a model. So I used Transfer learning using an Inception-V3 model for the same. Transfer Learning involves using a pre-trained neural network.</p>
+
+<p><strong>Inception V3:</strong></p>
+
+<p>Inception model is widely used in the area of image recognition. Inception model consists of 2 parts namely : Feature Extraction part with Convolutional Neural Networks and Classification using fully connected and softmax layers. The high level architecture of an inception net is given below.</p>
+
+<p><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086319/gta-sa/1_nJ6IoHRvG_MSVIfxfRy2Ug_baxze8.png" alt="[Source](https://cloud.google.com/tpu/docs/inception-v3-advanced)" /><em><a href="https://cloud.google.com/tpu/docs/inception-v3-advanced">Source</a></em></p>
+
+<p>Inception Model includes Convolutions, Average Pooling, max pooling, concatenations, dropouts and fully connected layers. Loss is computed via Softmax. However for this problem I do not use the classification part of Inception Model. The inception model used in this work is a Inception network that has been pre-trained on the imagenet dataset.</p>
+
+<h2 id="experiment-set-up-and-modelling">Experiment Set Up and Modelling:</h2>
+
+<p><strong>Step 1</strong>: Data collection : The data collected is a 35 minute screen record of the gameplay which is recorded at 30 frames per second. The big challenge here is to get the key pressed in each frame. As mentioned in the above section, that i have 9 classes here. ie there are 9 possible keys that can be pressed in a single frame. So what I did here was along with the gameplay I created a separate frame using open CV which will display the key pressed in each frame along with the gameplay. The code used for this is given below.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086374/gta-sa/1_0h2LUMWyk7XNNmNBhFdzlw_wqpdbj.png" /></div>
+
+<p>Using the above code, the individual frames looks like this :</p>
+
+<p><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086420/gta-sa/1_y5RgOIhpGV7uYoap5vV5wg_oc0llg.png" alt="Game Frame along with the key pressed" /><em>Game Frame along with the key pressed</em></p>
+
+<p>The frame contains two parts: The main Gameplay and the key press. Now the question is why did I choose this method? Well the reason is sometime images speak more than words. So if I want to edit the frames or cut some frames, I can still do it easily without the loss of any key press data.</p>
+
+<p><strong>Step 2 :</strong>In this step I split the frame into two parts namely image part and then the direction(key) part. Now I cropped the main frame such that some of the invalid information such as sky, time and other information from screen which are not important to me in this problem. The final images look like this :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086503/gta-sa/1_KVElcRv5ImxaUAuRZ4G-zQ_iawgln.png" /></div>
+
+<p><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086536/gta-sa/1_f1eBPLxopjt8C1yTeRla9A_rynd8n.png" alt="Key Press frame separated from the main gameplay frame" /><em>Key Press frame separated from the main gameplay frame</em></p>
+
+<p><strong>Step 3</strong> : This is perhaps one of the most challenging part of the whole project. Extracting the Key pressed in each frame. There are around 70k frames and manually labelling them is troublesome and time consuming. There are state of the art OCR(optical character recognition) techniques such as the Google Tesseract, however it was found to produce not so good result in this case. So the best strategy is to use Convolutional Neural network to advantage. So I collected some of the samples from the key press data and stored them in 9 folders such that each folder contains the same direction. For each of the 9 classes around 250 samples were used.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086570/gta-sa/1_U_raB8bX5y_2YkIdDnk44w_ji692j.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086597/gta-sa/1_19WpLdH5x7C_C9kPPmIJxw_bfs35p.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086623/gta-sa/1_Cv5agas5bmfQSc4MDEYyHg_uaasey.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086649/gta-sa/1_8--YzreYLESAFbMi2orYDw_vc1qz9.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086669/gta-sa/1_IxpTBYnfYqmhSI0jmO2TvA_bjnjsq.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086706/gta-sa/1_hx5fZA8-98dr1MQzbtlWlw_q5rfyt.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086743/gta-sa/1_QLLbzd10Zw9fv2igAeBEEQ_cxw6q2.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086777/gta-sa/1_7dwd581LfnGRsPb21YNHkw_v6tis0.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086820/gta-sa/1_MzH2xvn-eadICyntyVsDmw_bsmnfe.png" /></div>
+
+<div style="text-align:center">Different Classes of Key Press info After Removing background information except for the class None.</div>
+
+<p>In the above image R = Right, L=Left, U=Up, D = Down LU = Left+Up, Blank = No key Press etc.</p>
+
+<p>Now that I have the labelled data, I built a CNN model.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086864/gta-sa/1_jhCzu95RrjTvP1fUhxFLmQ_tuowxt.png" /></div>
+
+<div style="text-align:center">CNN used for Detecting Key Press from Images</div>
+
+<p>This simple CNN gave an accuracy of 100% on train data and I used the same CNN model to predict the direction for all other Key frames and to my surprise it did a terrific job in detecting the key press in each frame. Now the big question is does my model overfit? well it’s okay even if the model overfit since I am using this model only for this particular sub problem.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086906/gta-sa/1_T-CZ95Zuo3-6ma9VfyNT6A_wqklcw.png" /></div>
+
+<div style="text-align:center">Distribution of Key Pressed</div>
+
+<p>This data has an imbalanced distribution. So it should be taken care to avoid the model from being overfitted.</p>
+
+<p><strong>Step 4 :</strong> Now that I extracted the key press information in each frame, I can go for the actual Modelling. As mentioned earlier an Inception V3 model is used.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086948/gta-sa/1_9oZ-V1_E-nFLsldEhlU4xA_jcnpev.png" /></div>
+
+<p>Here I used 250 layers of Inception model and setting the size of input images to (120,75,3), 3 because the number of channels in a colour image is 3. I set include_top = False which means I don’t use the classification layers at the top. On the output of Inception model, I apply a Global Average pooling which is similar to 2D Average Pooling block except that the pool size is the size of the entire input of the block ie it computes a single average value for the all the incoming data. And on this output I applied a Dense layer with 1024 neurons and with tanh activation function. Loss function used is Categorical Cross Entropy with Optimizer as Adam. Early stopping with a patience of 15 was used to avoid the model from overfitting.</p>
+
+<p><strong>Results</strong> :</p>
+
+<p>The model has a validation accuracy of 99.035 on the train dataset. But the dataset is imbalanced, so I need to confirm that the model hasn’t overfitted. So I need to check the precision and Recall for the model on the train data.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595086971/gta-sa/1_8aI-PxispSF54ZC0Qp7P2Q_dtkye1.png" /></div>
+
+<div style="text-align:center">Recall Matrix for all the 9 classes</div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595087009/gta-sa/1_ogRMWNr2JqlP-B5fJSTv2A_h30okz.png" /></div>
+
+<div style="text-align:center">Precision Matrix for all the 9 classes</div>
+
+<p>From the Recall and Precision matrix, it can be observed that the model has done a very good job to identify the 9 different classes despite the fact that the dataset is imbalanced.</p>
+
+<p>Now Testing the model on a completely different scene which the model hasn’t seen.</p>
+
+<center><iframe width="560" height="315" src="https://www.youtube.com/embed/oWjOh6F0MbA" frameborder="0" allowfullscreen=""></iframe></center>
+
+<p>In the video, The red is the actual key pressed and the blue in main screen is the predicted key. Some of the Observations are:</p>
+
+<ul>
+  <li>
+    <p>The Predicted key is same in most cases as that of the actual key pressed which implies that the model is not overfitting.</p>
+  </li>
+  <li>
+    <p>The model has learned to stop at red signal.</p>
+  </li>
+  <li>
+    <p>The model can drive at night.</p>
+  </li>
+</ul>
+
+<p><strong>Some Failure Cases :</strong></p>
+
+<ol>
+  <li>Driving in Extreme Conditions</li>
+</ol>
+
+<center><iframe width="560" height="315" src="https://www.youtube.com/embed/IKhbOZYz1eQ" frameborder="0" allowfullscreen=""></iframe></center>
+
+<p>For this test I made the model run in the background and gave the control of the car to the model. The climate here is night and snowy and the visibility is nearly zero and model struggles to drive the car well here. Whenever there is a key name appear on the black frame, it means I helped the model there and the key that I pressed is displayed there. It can be very clearly seen from the video that the model struggles to drive when visibility is nearly zero.</p>
+
+<ol>
+  <li>Steep turns</li>
+</ol>
+
+<center><iframe width="560" height="315" src="https://www.youtube.com/embed/ygZG4S1csn8" frameborder="0" allowfullscreen=""></iframe></center>
+
+<p>Just like the above case(Video 2) model controls the car, however when model struggles, I help the model by pressing keys manually which can be seen in the black frame the key I pressed. One major observation is that when there is a very steep turn model faces difficulty to turn properly. This issue can be resolved if the duration of key press is also considered during the training.</p>
+
+<p><strong>Comparison With Need For Speed Undercover :</strong></p>
+
+<center><iframe width="560" height="315" src="https://www.youtube.com/embed/xUT4QrpPY-w" frameborder="0" allowfullscreen=""></iframe></center>
+
+<p>I trained Inception model using the similar approach as above on NFS Undercover game. In the video the one in main frame(blue colour text) is the predicted key and the text in black frame is the actual key pressed. However it can be seen from the video that the model doesn’t do a very good job here the reason for that is because the traffic in NFS is less compared to that of the GTA game. Also the model was having an accuracy of only 84% while training. However this could be improved if more data was used for training. The code is available in my <a href="https://github.com/bitmask93/AI_Driving_Car_In_GTA_San_Andreas">GitHub</a> account.</p>
+
+<p><strong>Future Work</strong> :</p>
+
+<ul>
+  <li>
+    <p>Could use other models as base learners in transfer learning such as AlexNet, VGG16, Resnet, Densenet etc.</p>
+  </li>
+  <li>
+    <p>Even though I tried the same with Need For Speed Undercover, the results were biased because the traffic was very less compared to that of GTA. However considering more data during training might improve the results.</p>
+  </li>
+  <li>
+    <p>Same can be tried with latest versions of GTA as they are more realistic than this version.</p>
+  </li>
+  <li>
+    <p>Including in training data different climatic conditions when the visibility is very less.</p>
+  </li>
+</ul>
+
+<p><strong>References :</strong></p>
+
+<p>The following are some of the references I used for this work:</p>
+
+<ul>
+  <li>
+    <p><a href="https://cloud.google.com/tpu/docs/inception-v3-advanced">https://cloud.google.com/tpu/docs/inception-v3-advanced</a></p>
+  </li>
+  <li>
+    <p><a href="https://github.com/tensorflow/models/tree/master/research/inception">https://github.com/tensorflow/models/tree/master/research/inception</a></p>
+  </li>
+  <li>
+    <p><a href="https://keras.io/applications/#inceptionv3">https://keras.io/applications/#inceptionv3</a></p>
+  </li>
+  <li>
+    <p><a href="https://codelabs.developers.google.com/codelabs/cpb102-txf-learning/index.html#1">https://codelabs.developers.google.com/codelabs/cpb102-txf-learning/index.html#1</a></p>
+  </li>
+  <li>
+    <p><a href="https://medium.com/@sh.tsang/review-inception-v3-1st-runner-up-image-classification-in-ilsvrc-2015-17915421f77c">https://medium.com/@sh.tsang/review-inception-v3-1st-runner-up-image-classification-in-ilsvrc-2015-17915421f77c</a></p>
+  </li>
+  <li>
+    <p><a href="https://www.tensorflow.org/beta/tutorials/images/transfer_learning">https://www.tensorflow.org/beta/tutorials/images/transfer_learning</a></p>
+  </li>
+  <li>
+    <p><a href="https://sites.google.com/a/princeton.edu/arturf/self-driving-and-gta5">https://sites.google.com/a/princeton.edu/arturf/self-driving-and-gta5</a></p>
+  </li>
+</ul>
+
+      <div class="page-footer">
+        <div class="page-share">
+          <a href="https://twitter.com/intent/tweet?text=AI Controlling Car in GTA San Andreas&url=http://localhost:4000/AI-Controlling-Car-in-GTA-San-Andreas/" title="Share on Twitter" rel="nofollow" target="_blank">Twitter</a>
+          <a href="https://facebook.com/sharer.php?u=http://localhost:4000/AI-Controlling-Car-in-GTA-San-Andreas/" title="Share on Facebook" rel="nofollow" target="_blank">Facebook</a>
+          <a href="https://plus.google.com/share?url=http://localhost:4000/AI-Controlling-Car-in-GTA-San-Andreas/" title="Share on Google+" rel="nofollow" target="_blank">Google+</a>
+        </div>
+        <div class="page-tag">
+          
+            <a href="/ml-blog/tags#Machine Learning" class="tag">&#35; Machine Learning</a>
+          
+            <a href="/ml-blog/tags#Computer Vision" class="tag">&#35; Computer Vision</a>
+          
+        </div>
+      </div>
+      <section class="comment-area">
+  <div class="comment-wrapper">
+    
+    <div id="disqus_thread" class="article-comments"></div>
+    <script>
+      (function() {
+          var d = document, s = d.createElement('script');
+          //var disqus_shortname = '';
+          s.src = '//jithin-1.disqus.com/embed.js';
+          //s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+  </div>
+</section> <!-- End Comment Area -->
+
+    </div> <!-- End Wrap Content -->
+  </div> <!-- End Page Content -->
+</article> <!-- End Article Page -->
+
+</div>
+
+  </div>
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', '', 'auto');
+  ga('send', 'pageview');
+</script> <!-- End Analytics -->
+
+</body>
+</html>

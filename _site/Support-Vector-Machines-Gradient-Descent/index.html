@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Support Vector Machines & Gradient Descent - Machine Learning Blogs</title>
+
+  <!-- Edit site and author settings in `_config.yml` to make the social details your own -->
+
+    <meta content="Machine Learning Blogs" property="og:site_name">
+  
+    <meta content="Support Vector Machines & Gradient Descent" property="og:title">
+  
+  
+    <meta content="article" property="og:type">
+  
+  
+    <meta content="In this blog, I will discuss Linear SVM using Gradient Descent along with Platt scaling" property="og:description">
+  
+  
+    <meta content="http://localhost:4000/Support-Vector-Machines-Gradient-Descent/" property="og:url">
+  
+  
+    <meta content="2020-06-07T16:02:20+05:30" property="article:published_time">
+    <meta content="http://localhost:4000/about/" property="article:author">
+  
+  
+    <meta content="http://localhost:4000/ml-blog/assets/img/david-freeman.jpg" property="og:image">
+  
+  
+    
+  
+  
+    
+    <meta content="Data Science" property="article:tag">
+    
+    <meta content="Machine Learning" property="article:tag">
+    
+    <meta content="Math" property="article:tag">
+    
+  
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@">
+    <meta name="twitter:creator" content="@">
+  
+    <meta name="twitter:title" content="Support Vector Machines & Gradient Descent">
+  
+  
+    <meta name="twitter:url" content="http://localhost:4000/Support-Vector-Machines-Gradient-Descent/">
+  
+  
+    <meta name="twitter:description" content="In this blog, I will discuss Linear SVM using Gradient Descent along with Platt scaling">
+  
+  
+    <meta name="twitter:image:src" content="http://localhost:4000/ml-blog/assets/img/david-freeman.jpg">
+  
+
+	<meta name="description" content="In this blog, I will discuss Linear SVM using Gradient Descent along with Platt scaling">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta property="og:image" content="">
+	<link rel="shortcut icon" href="/ml-blog/assets/img/favicon/favicon.ico" type="image/x-icon">
+	<link rel="apple-touch-icon" href="/ml-blog/assets/img/favicon/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/ml-blog/assets/img/favicon/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/ml-blog/assets/img/favicon/apple-touch-icon-144x144.png">
+	<!-- Chrome, Firefox OS and Opera -->
+	<meta name="theme-color" content="#263959">
+	<!-- Windows Phone -->
+	<meta name="msapplication-navbutton-color" content="#263959">
+	<!-- iOS Safari -->
+	<meta name="apple-mobile-web-app-status-bar-style" content="#263959">
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=PT+Serif:400,700|Lato:300,400,700&display=swap" rel="stylesheet">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="/ml-blog/assets/fonts/font-awesome/css/font-awesome.min.css">
+	<!-- Styles -->
+	<link rel="stylesheet" href="/ml-blog/assets/css/main.css">
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <aside class="sidebar">
+  <header>
+    <div class="about">
+      <div class="cover-author-image">
+        <a href="/ml-blog/"><img src="/ml-blog/assets/img/david-freeman.jpg" alt="Jithin J"></a>
+      </div>
+      <div class="author-name">Jithin J</div>
+      <p>Machine Learning Engineer. Interested in Machine Learning and Deep Learning.</p>
+    </div>
+  </header> <!-- End Header -->
+  <footer>
+    <section class="contact">
+      <h3 class="contact-title">Contact me</h3>
+      <ul>
+        
+          <li class="github"><a href="http://github.com/bitmask93" target="_blank"><i class="fa fa-github"></i></a></li>
+        
+        
+          <li class="linkedin"><a href="https://in.linkedin.com/in/jithin-j-a5b662170" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        
+        
+          <li class="email"><a href="mailto:jithinjayan1993@gmail.com"><i class="fa fa-envelope-o"></i></a></li>
+        
+      </ul>
+    </section> <!-- End Section Contact -->
+    <div class="copyright">
+      <p>2020 &copy; Jithin J</p>
+    </div>
+  </footer> <!-- End Footer -->
+</aside> <!-- End Sidebar -->
+<div class="content-box clearfix">
+  <article class="article-page">
+  <div class="page-content">
+    
+    
+    <div class="wrap-content">
+      <header class="header-page">
+        <h1 class="page-title">Support Vector Machines & Gradient Descent</h1>
+        <div class="page-date"><span>2020, Jun 07&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+      </header>
+      <h4 id="in-this-blog-i-will-discuss-linear-svm-using-gradient-descent-along-with-plattscaling">In this blog, I will discuss Linear SVM using Gradient Descent along with Platt scaling</h4>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595167490/svm-gd/0_HL7VSn9kYGInyy8Y_s9dunp.jpg" /></div>
+
+<div style="text-align:center"><p>Photo by <a href="https://unsplash.com/@charlesdeluvio?utm_source=medium&amp;utm_medium=referral">Charles Deluvio</a> on <a href="https://unsplash.com?utm_source=medium&amp;utm_medium=referral">Unsplash</a></p>
+</div>
+
+<p>This is part 3 of my blogs on Linear Models. In <a href="https://bitmask93.github.io/ml-blog/Linear-Regression&amp;Gradient-Descent/">part 1</a>, I had discussed Linear Regression and Gradient Descent and in <a href="https://bitmask93.github.io/ml-blog/Logistic-Regression-Gradient-Descent/">part 2</a> I had discussed Logistic Regression and their implementations in Python. In this blog, I will discuss Support Vector Machines (Linear) and its implementation using Gradient Descent.</p>
+
+<h4 id="introduction">Introduction :</h4>
+
+<p>Support-vector machines (SVMs) are supervised learning models capable of performing both Classification as well as Regression analysis. Given a set of training examples each belonging to one or the other two categories, an SVM training algorithm builds a model that assigns new examples to one category or the other. SVM is a non-probabilistic binary linear classification algorithm ie given a training instance, it will not output a probability distribution over a set of classes rather it will output the most likely class that the observation should belong to. However, methods such as Platt scaling exist to use SVM in a probabilistic classification setting. Platt scaling or Platt Calibration is a way of transforming the outputs of a classification model into a probability distribution over classes. Platt scaling works by fitting a logistic regression model to a classifier’s scores. In addition to performing linear classification, SVMs can efficiently perform a non-linear classification using what is called the kernel trick, implicitly mapping the inputs into high-dimensional feature spaces. In the case of support vector machines, a data point is viewed as a <em>p−dimensional vector</em>(a list of p numbers), and we want to know whether we can separate such points with a <em>(p−1)</em>-dimensional hyperplane. There are many hyperplanes that might classify the data. One reasonable choice as the best hyperplane is the one that represents the largest separation, or margin, between the two classes. So we choose the hyperplane so that the distance from it to the nearest data point on each side is maximized. Such a hyperplane is called as a <em>maximum-margin hyperplane</em> and the linear classifier it defines is called as a <em>margin maximizing classifier</em>.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595173695/svm-gd/1_X4n4dnFKyYyXc5XZ2uFNsw_zguugs.png" /></div>
+
+<div style="text-align:center"><p>Source: <a href="https://en.wikipedia.org/wiki/Support_vector_machine#/media/File:Svm_separating_hyperplanes_%28SVG%29.svg">Wikipedia</a></p>
+</div>
+
+<p>Here we can see three hyperplanes <em>H1</em>, <em>H2</em>, <em>H3</em>. Here <em>H1</em> does not separate the classes, but <em>H2</em> and <em>H3</em> do but the margin is maximum for <em>H3</em>. A good separation is achieved by the hyperplane that has the largest distance to the nearest training-data point of any class. The larger the margin, the lower the generalization error of the classifier. Consider we are given the following training examples :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595173789/svm-gd/1_1l9E2m2JPvGTA5VrsR4eXg_pcypso.gif" /></div>
+
+<p>Here each <strong><em>yi</em></strong> belongs to either +1 or -1 indicating the class to which <strong><em>yi</em></strong> belongs to. and each <strong><em>xi</em></strong> is a <em>p-dimensional</em> real vector. The objective is to find a hyperplane that maximises the margin that divides the group of data points <strong><em>xi</em></strong> for which <strong><em>yi</em></strong> = 1 and for which <strong><em>yi</em></strong> = −1.</p>
+
+<p>Any hyperplane can be written as the set of points <strong><em>x</em></strong> satisfying:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595173833/svm-gd/1_c7QHMUx4WDMNrx7GlKJWVA_wvlumx.gif" /></div>
+
+<p>Where <strong><em>w</em></strong> is the normal vector to the hyperplane. Here <strong><em>w</em></strong> need not be normalized. The parameter (<strong>b/||w||</strong>) determines the offset of the hyperplane from the origin along the normal vector <strong><em>w.</em></strong></p>
+
+<h4 id="hard-marginsvm">Hard Margin SVM</h4>
+
+<p>If the data is linearly separable, we can select two parallel hyperplanes that separate the two classes of data, so that the distance between them is as large as possible. The region bounded by these two hyperplanes is called the <strong>margin</strong>, and the maximum-margin hyperplane is the hyperplane that lies halfway between them. These hyperplanes can be described with the following equations :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595173879/svm-gd/1_u_NUWirm31iJ5SBE2cpk6g_sjw7or.gif" /></div>
+
+<p>Anything on or above this boundary is of class with label 1</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595173918/svm-gd/1_1qtMETWHZ1jeS7R8WpqL4g_fneq2e.gif" /></div>
+
+<p>Anything on or below this boundary is of the class with label −1</p>
+
+<p>Geometrically the distance between these two hyperplanes is given as (<strong>2/||w||</strong>), so to maximize the distance between the planes, we want to minimize <strong>||w||</strong> The distance is computed using the distance from a point to a plane equation. To prevent data points from falling into the margin, we add the following constraint: for each <strong><em>i</em></strong> either:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595173963/svm-gd/1_C-ZfdK1kRi5mkrfb4uqUDQ_wansia.gif" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595174010/svm-gd/1_O2214SF4gWGfdhDkrdbRXw_ezd71y.gif" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595174055/svm-gd/1_zR6nmrL_GnwWzMYOs1EE6Q_yw9opl.gif" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595174095/svm-gd/1_8PE415rKlGu0fqdUXMeovg_s4twcd.png" /></div>
+
+<div style="text-align:center"><p>Source: <a href="https://en.wikipedia.org/wiki/Support_vector_machine#/media/File:SVM_margin.png">Wikipedia</a></p></div>
+
+<p>These constraints state that each data point must lie on the correct side of the margin. The above constraints can be rewritten as:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595174396/svm-gd/1_kWybixTfgLpNEwqsBi0U5Q_zgikkn.png" /></div>
+
+<p>The optimization problem can be written as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595174496/svm-gd/1_ytNK1bqsjPIZrkC7QsgUww_dytgnn.gif" /></div>
+
+<p>The <strong><em>w</em></strong> and <strong><em>b</em></strong> that solve this problem determine the classifier. Given an input <strong><em>x,</em></strong> the model’s output is given by:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595174538/svm-gd/1_USv2kEX-Af9bKqwgCNe1dQ_nkb8wr.gif" /></div>
+
+<p>Maximum-margin hyperplane is completely determined by those <strong><em>xi</em></strong> which is nearest to it. These <strong><em>xi</em></strong> are called <em>Support vectors</em>. ie they are the data points on the margin.</p>
+
+<h4 id="soft-margin-svm">Soft-margin SVM</h4>
+
+<p>Hard-margin SVM requires data to be linearly separable. But in the real-world, this does not happen always. So we introduce the <em>hinge-loss</em> function which is given as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595174577/svm-gd/1_3lbteVblmQ7ZBvcE36txhQ_p78jyc.gif" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595174732/svm-gd/1_Xh0N4ypjgqvvunQki1HX5g_okegx4.gif" /></div>
+
+<p>This function outputs 0, if <strong><em>xi</em></strong> lies on the correct side of the margin. For data on the wrong side of the margin, the function’s value is proportional to the distance from the margin. Here we need to minimize the following :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595174773/svm-gd/1_oSHHO0rDIWKE-lRdQeaYXg_lh8y9e.gif" /></div>
+
+<p><strong>λ</strong> determines the tradeoff between increasing the margin size and ensuring that the <strong><em>xi</em></strong> lie on the correct side of the margin. For sufficiently small values of <strong><em>λ</em></strong> , the second term in the loss function will become negligible, hence, it will behave similar to the hard-margin SVM.</p>
+
+<h3 id="computing-the-svm-classifier">Computing the SVM classifier</h3>
+
+<h4 id="primal"><strong>Primal :</strong></h4>
+
+<p>Minimizing the above equation can be rewritten as a constrained optimization problem with a differentiable objective function in the following way :</p>
+
+<p>For each <strong><em>i∈{1,….,n}</em></strong>, we introduce a variable <strong>ζ</strong>(Zeta), such that :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595175109/svm-gd/1_isnbp9KE4h42WE57jz18GQ_a4bdye.gif" /></div>
+
+<p><strong>ζ</strong> is the smallest nonnegative number satisfying :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595175149/svm-gd/1_56CJIQFeHbyo26QkZEYmOQ_rwnbew.gif" /></div>
+
+<p>Now we can rewrite the optimization problem as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595175194/svm-gd/1_Q8Zz4bs9mnBWAsRorQMq_A_dswjp0.gif" /></div>
+
+<h4 id="the-dual">The Dual :</h4>
+
+<p>Even though we can solve the primal using Quadratic Programming(QP), solving the dual form of the optimization problem plays a key role in allowing us to use kernel functions to get the optimal margin classifiers to work efficiently in very high dimensional spaces. The dual form will also allow us to derive an efficient algorithm for solving the above optimization problem that will typically do much better than generic QP. By solving for the Lagrangian dual of the above problem, we can get the simplified problem :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595175238/svm-gd/1_PN3B66UAVb58DVXgWocYCQ_gxv9vr.gif" /></div>
+
+<p><strong><em>αi</em></strong> is defined such that:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595175277/svm-gd/1__5hNUPKaLoZNkZNh6TtIrA_ncl418.gif" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595175326/svm-gd/1_T3MmSlLwDDnpaklv5Wa17w_my1znd.gif" /></div>
+
+<p>It follows that <strong><em>w</em></strong> can be written as a linear combination of the support vectors. The offset, <strong><em>b</em></strong>, can be recovered by finding an <strong><em>xi</em></strong> on the margin’s boundary and solving the following :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595175373/svm-gd/1_aFwaSGDRK-8uq_7i0AiqLw_cbmdlz.gif" /></div>
+
+<p><strong>Kernel trick :</strong></p>
+
+<p>This is used to learn a nonlinear classification rule by projecting the non-linear dataset into a higher dimensional space in which the data is linearly separable. Here we apply a function called the <strong>Kernel Function,</strong> which maps the data into higher dimensional space where the data is linearly separable. Let us denote the transformed data points as <strong><em>φ(xi)</em></strong> and we have a kernel function <strong><em>K</em></strong> which satisfies the following :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595175420/svm-gd/1_YQfnTNmrHh6hz7qjSCTQYA_q2k5yu.gif" /></div>
+
+<p>Some of the common Kernels are as follows :</p>
+
+<ul>
+  <li><strong>Polynomial Kernel:</strong> For degree-_d_ polynomials, the polynomial kernel is defined as :</li>
+</ul>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595175643/svm-gd/1_Kq2iKKnCfJQR0rV-uGK3uw_m4mvp8.gif" /></div>
+
+<p>If c=0, then the Kernel is called Homogeneous</p>
+
+<ul>
+  <li><strong>Gaussian Radial Basis Function :</strong></li>
+</ul>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595175680/svm-gd/1_YVgR5lt76XoA8fzUTBFGpQ_xvwzc4.gif" /></div>
+
+<ul>
+  <li><strong>Hyperbolic tangent :</strong></li>
+</ul>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595175718/svm-gd/1_b9wLeXhEaOaycv0BGuQolQ_h7eyha.gif" /></div>
+
+<p>The classification vector <strong><em>w</em></strong> in the transformed space satisfies :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595175772/svm-gd/1_nNe2oJly8ccqZVmEMrVwmA_tblkgv.gif" /></div>
+
+<p>Where <strong><em>αi</em></strong> is obtained by solving the optimization problem :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178239/svm-gd/1_-kcj5eezjN99k6Is3fU3ng_hqv82k.gif" /></div>
+
+<p>We can solve <strong><em>αi</em></strong> using techniques such as Quadratic Programming, Gradient Ascent or using Sequential Minimal Optimization(SMO) techniques. We can find some index <em>i</em> such that :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178282/svm-gd/1_l9gIdP4hZdSE_RKWPB4vHg_gcmths.png" /></div>
+
+<p>So for a new datapoint <strong><em>z</em></strong>, we can get the class it belongs to using the following:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178345/svm-gd/1_YRSBXN0qnt5a4E4ox0lE8w_k3vaqj.png" /></div>
+
+<h3 id="sub-gradient-descent-forsvm">Sub-Gradient Descent for SVM</h3>
+
+<p>As mentioned earlier, linear SVM use hinge-loss, the below plot is a comparison between 0–1 loss and the hinge-loss :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178389/svm-gd/1_2mm76R9Ze8fQH0Ed1pjPpg_ssrhhr.png" /></div>
+
+<div style="text-align:center"><p>Source: <a href="https://en.wikipedia.org/wiki/Hinge_loss#/media/File:Hinge_loss_vs_zero_one_loss.svg">Wikipedia</a></p>
+</div>
+
+<p>Here the Blue is the Hinge Loss and Green is 0–1 loss. Why can’t we use 0–1 Loss in SVM instead of Hinge Loss?</p>
+
+<p>0–1 loss function is flat so it doesn’t converge well. Also, it is not differentiable at 0. SVM is based on solving an optimization problem that maximize the margin between classes. So in this context, a convex loss function is preferable so we can use several general convex optimization methods. The 0–1 loss function is not convex so it is not very useful either. SVM objective function is nothing but Hinge loss with <strong><em>l2</em></strong> regularization :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178494/svm-gd/1_BWiBux9hxXJvq-7je-SYKQ_wqpdax.png" /></div>
+
+<p>This function is not differentiable at <strong><em>x</em></strong>=1. The derivative of hinge loss is given by:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178535/svm-gd/1_16sb87H6WRPJhLTyEPgOCQ_buq8so.png" /></div>
+
+<p>We need gradient with respect to parameter vector <strong><em>w</em></strong>. For simplicity, we will not consider the bias term <strong><em>b</em></strong>.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178582/svm-gd/1_dwhYB-6eVuxMJJiIT0kegA_pdhxiw.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178671/svm-gd/1_rlnRJqcPKdtl3V_NJuHFDA_yfflyi.gif" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178708/svm-gd/1_8nMcpT_5VI7XegobJW4lVQ_zbk5tc.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178739/svm-gd/1_Y3TWvpXunvCRadREty5UIw_kkrbq1.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178780/svm-gd/1_iNsnXHonsfpEw9YjwXiXWw_mmszfq.png" /></div>
+
+<p>So the Gradient of SVM Objective function is :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178814/svm-gd/1_b7nd32QFEOVbwlo3BMbaxQ_ltksk5.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178844/svm-gd/1_BNFpMtal42ViHJp0a43F0Q_ilsx0a.png" /></div>
+
+<p><strong>Subgradient Of SVM Loss Function</strong> :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178875/svm-gd/1_b0PKfPpFuLz9GpK_hYaAjw_p0g9h4.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178906/svm-gd/1_yC-81M3nfYeTyxM--se40g_hxzjjn.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178938/svm-gd/1_7QYJj3xgdn4a8PLwjaB54w_r0dtvj.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595178971/svm-gd/1_CFjoZq06L8byQWL_3WZpgQ_pcjpqp.png" /></div>
+
+<p>So the Subgradient of Cost Function can be written as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595179007/svm-gd/1_3TAt7frh1p3F5b8vE5JXMg_winslx.png" /></div>
+
+<h3 id="svm-extensions">SVM Extensions :</h3>
+
+<ul>
+  <li><strong>Multiclass SVM :</strong></li>
+</ul>
+
+<p>SVM is a binary classifier and hence directly it doesn’t support multiclass classification problem. So one way of dealing with multiclass setting is to reduce the single multiclass problem into multiple binary classification problems. One method to do this is to binary classifiers that distinguish between one of the labels and the rest (<strong><em>one-versus-all</em></strong>) or between every pair of classes (<strong><em>one-versus-one</em></strong>). <em>One-versus-all</em> is done by done by a winner-takes-all strategy in which the classifier with the highest output function is assigned the class, here the output functions must be calibrated to produce comparable scores. In <em>one-versus-one</em> classification is done by a max-wins voting strategy, in which every classifier assigns the instance to one of the two classes, then the vote for the assigned class is increased by one vote, and finally the class with the most votes determines the instance classification.</p>
+
+<ul>
+  <li><strong>Support Vector Regression</strong> :</li>
+</ul>
+
+<p>Training an SVR(Support Vector Regressor) means solving the following :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595179043/svm-gd/1_VqGOJYVtKKV6FN39kiRSaw_g0l8wh.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595179081/svm-gd/1_tfXSmIJx8PBl20UHEen71A_p91lci.png" /></div>
+
+<p>where <strong><em>xi</em></strong> is the training sample and <strong><em>yi</em></strong> is the target value. Here <strong><em>ϵ</em></strong> is the parameter that serves as a threshold ie all the predictions have to be within <strong><em>ϵ</em></strong> range of true predictions.</p>
+
+<h3 id="platt-scaling">Platt Scaling :</h3>
+
+<p>In machine learning, Platt scaling or Platt calibration is a way of transforming the outputs of a classification model into a probability distribution over classes. Platt scaling works by fitting a logistic regression model to a classifier’s scores. Consider that we have a binary classification problem: So for a given input <strong><em>x</em></strong>, we want to determine if they belong to either of two classes +1 or −1. Let’s say the classification problem will be solved by a real-valued function <strong><em>f</em></strong>, by predicting a class label <strong><em>y=sign(f(x))</em></strong>. Platt Scaling produces probability estimates by applying a logistic transformation of the classifier scores <strong><em>f(x)</em></strong> :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595179233/svm-gd/1_1fOt0_Xvjkrbk-864UPBEQ_ohbg2y.png" /></div>
+
+<p>The parameters A and B are estimated using maximum likelihood estimation from the training set <strong><em>(fi,yi)</em></strong>. First, let us define a new training set <strong><em>(fi,ti)</em></strong>where <strong><em>ti</em></strong> are target probabilities defined as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595179284/svm-gd/1_Ibkiwqu0CMeXOEowxvgq_A_oj9avk.png" /></div>
+
+<p>The parameters <strong>A</strong> and <strong>B</strong> are found by minimizing the negative log likelihood of the training data, which is a cross-entropy error function :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595179330/svm-gd/1_c6LxTqdmuZlZOJ1O5F26ug_siq4fn.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595180351/svm-gd/1_Ifw6jiMekKWFWmCzO0ZuUQ_kekfgv.png" /></div>
+
+<p>The minimization is a two-parameter minimization. Hence, it can be performed using any number of optimization algorithms. The probability of correct label can be derived using Bayes’ rule. Let us choose a uniform uninformative prior over probabilities of correct label. Now, let us observe that there are <strong><em>N+</em></strong> positive examples and <strong><em>N-</em></strong> negative examples. The MAP estimate for the target probability of positive examples(y=+1) is :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595180402/svm-gd/1_UzP2cMO_R8-LiUvcB2VIZw_dz98op.png" /></div>
+
+<p>The MAP estimate for the target probability of negative examples(y=−1)(y=−1) is :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595180490/svm-gd/1_JtFI2cRIb8_1fJSXqJIk-g_fh3qrf.png" /></div>
+
+<p>These targets are used instead of {0, 1} for all of the data in the sigmoid fit. These non-binary targets value are Bayes-motivated and these non-binary targets will converge to {0,1} when the training set size approximates to infinity, which recovers the maximum likelihood sigmoid fit.</p>
+
+<p>Now let us implement linear SVM for a binary classification using the Sub-Gradient Descent which I have described above :</p>
+
+<p>Let us create a simple dataset :</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">X</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>  
+<span class="n">y</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="no">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="o">-</span><span class="mi">3</span> <span class="o">*</span> <span class="no">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>  
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">round</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">y</span><span class="p">)))</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">len</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>  <span class="c1">#Changing labels from [0,1] to [-1,+1]  </span>
+    <span class="k">if</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>  
+        <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  
+    <span class="ss">else:  
+        </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span></code></pre></figure>
+
+<p>Now let us plot the data :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595180617/svm-gd/1_I4RPt0jUxorz0OqUPpSiqA_uhdyho.png" /></div>
+
+<div style="text-align:center">Image by Author</div>
+
+<p>Here we can see that the data is linearly separable, but at the same time the margin size should be very small. If we increase the margin here, then the misclassifications will more.</p>
+
+<p>Now let’s define the hinge loss function :</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">hinge_loss</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">lambdh</span><span class="p">):</span>  
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#Intercept term: Initialize with ones.  </span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span><span class="o">-</span><span class="n">b</span><span class="p">)</span>  
+    <span class="n">distances</span><span class="p">[</span><span class="n">distances</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># equivalent to max(0, distance)  </span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span> <span class="o">/</span> <span class="n">x</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  
+      
+    <span class="c1"># calculate cost  </span>
+    <span class="n">hinge_loss</span> <span class="o">=</span> <span class="n">lambdh</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="n">loss</span>  
+      
+    <span class="k">return</span> <span class="n">hinge_loss</span></code></pre></figure>
+
+<p>Now let’s define the function to get the gradients of hinge loss :</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">get_grads</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">lambdh</span><span class="p">):</span>  
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#Intercept or Bias: Initialize with ones  </span>
+    <span class="n">grad_arr</span> <span class="o">=</span> <span class="p">[]</span>  
+    <span class="no">I</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span><span class="o">-</span><span class="n">b</span><span class="p">)</span>  <span class="c1">#Indicator Function  </span>
+      
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">len</span><span class="p">(</span><span class="no">I</span><span class="p">)):</span>  
+        <span class="k">if</span><span class="p">(</span><span class="no">I</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">1</span><span class="p">):</span>  
+            <span class="no">I</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  
+        <span class="ss">else:  
+            </span><span class="no">I</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  
+              
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>  
+        <span class="n">grad_arr</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="o">-</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="no">I</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>  
+              
+    <span class="n">grads</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="n">grad_arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">lambdh</span><span class="o">*</span><span class="n">w</span>  
+    <span class="k">return</span> <span class="n">grads</span></code></pre></figure>
+
+<p><strong>Mini-Batch SGD :</strong></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">])</span> <span class="c1">#Initial Weights  </span>
+<span class="n">eta</span><span class="o">=</span> <span class="mf">0.1</span> <span class="c1"># learning rate  </span>
+<span class="n">n_iter</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1"># Number of Iterations  </span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span>  
+<span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n_iter</span><span class="p">)</span> <span class="c1">#Array to store loss in each iteration  </span>
+<span class="n">lambdh</span> <span class="o">=</span> <span class="mf">0.001</span>  <span class="c1">#To control the margin width.</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>  
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">)</span>   
+    <span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">hinge_loss</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">w</span><span class="p">,</span> <span class="n">lambdh</span><span class="p">)</span>  
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">-</span> <span class="n">eta</span> <span class="o">*</span> <span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">w</span><span class="p">,</span> <span class="n">lambdh</span><span class="p">)</span></code></pre></figure>
+
+<p>Here you can change the value of ‘lambdh’ parameter and see the model’s performance. If you increase the margin size, it can be observed that the number of misclassifications increase.</p>
+
+<p><strong>SGD With Momentum :</strong></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">])</span> <span class="c1">#Initial Weights  </span>
+<span class="n">eta</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1"># learning rate  </span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="c1"># momentum</span>
+
+<span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros_like</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>  <span class="c1">#This is an additional vector  </span>
+<span class="n">es</span> <span class="o">=</span> <span class="mf">0.0001</span> <span class="c1">#For early stopping  </span>
+<span class="n">n_iter</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1">#Number of iterations</span>
+
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span>  
+<span class="n">lambdh</span> <span class="o">=</span> <span class="mf">0.001</span>  
+<span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n_iter</span><span class="p">)</span> <span class="c1">#List to store the loss in each iteration</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>  
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">)</span>  
+    <span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">hinge_loss</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">w</span><span class="p">,</span> <span class="n">lambdh</span><span class="p">)</span>  
+      
+    <span class="n">h</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">h</span> <span class="o">+</span> <span class="n">eta</span> <span class="o">*</span> <span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">w</span><span class="p">,</span> <span class="n">lambdh</span><span class="p">)</span>  
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">-</span><span class="n">h</span></code></pre></figure>
+
+<p><strong>SGD With Nestrov accelerated momentum :</strong></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">])</span> <span class="c1">#Initial Weights  </span>
+<span class="n">eta</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1"># learning rate  </span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="c1"># momentum</span>
+
+<span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros_like</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>  <span class="c1">#This is an additional vector  </span>
+<span class="n">es</span> <span class="o">=</span> <span class="mf">0.0001</span> <span class="c1">#For early stopping</span>
+
+<span class="n">n_iter</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1">#Number of iterations  </span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span>  
+<span class="n">lambdh</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="c1">#To control the width of the margin  </span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n_iter</span><span class="p">)</span> <span class="c1">#List to store the loss in each iteration</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>  
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">)</span>  
+    <span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">hinge_loss</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">w</span><span class="p">,</span> <span class="n">lambdh</span><span class="p">)</span>  
+      
+    <span class="n">h</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">h</span> <span class="o">+</span> <span class="n">eta</span> <span class="o">*</span> <span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">w</span><span class="p">,</span> <span class="n">lambdh</span><span class="p">)</span>   
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">-</span><span class="n">h</span></code></pre></figure>
+
+<p><strong>RMSProp :</strong></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">])</span> <span class="c1">#Initial Weights  </span>
+<span class="n">eta</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1"># learning rate  </span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="c1"># momentum</span>
+
+<span class="n">gt</span> <span class="o">=</span> <span class="no">None</span>  
+<span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-8</span>  
+<span class="n">es</span> <span class="o">=</span> <span class="mf">0.0001</span> <span class="c1">#For early stopping</span>
+
+<span class="n">lambdh</span> <span class="o">=</span> <span class="mf">0.001</span>  
+<span class="n">n_iter</span> <span class="o">=</span> <span class="mi">1000</span>  
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span>  
+<span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n_iter</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>  
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">)</span>  
+    <span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">hinge_loss</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">w</span><span class="p">,</span> <span class="n">lambdh</span><span class="p">)</span>  
+      
+    <span class="n">gt</span> <span class="o">=</span> <span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">w</span><span class="p">,</span> <span class="n">lambdh</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>  
+    <span class="n">gt</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">gt</span> <span class="o">+</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">gt</span>  
+      
+    <span class="n">a</span> <span class="o">=</span> <span class="n">eta</span> <span class="o">*</span> <span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">w</span><span class="p">,</span> <span class="n">lambdh</span><span class="p">)</span><span class="n">np</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">gt</span><span class="o">+</span><span class="n">eps</span><span class="p">)</span>  
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">-</span><span class="n">a</span></code></pre></figure>
+
+<p><strong>Adam :</strong></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">])</span> <span class="c1">#Initial Weights  </span>
+<span class="n">eta</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1"># learning rate  </span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="c1"># momentum</span>
+
+<span class="n">gt</span> <span class="o">=</span> <span class="no">None</span>  
+<span class="n">vt</span> <span class="o">=</span> <span class="mi">0</span>  
+<span class="n">beta</span> <span class="o">=</span> <span class="mf">0.0005</span>
+
+<span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-8</span>  
+<span class="n">es</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1">#For early stopping  </span>
+<span class="n">lambdh</span> <span class="o">=</span> <span class="mf">0.001</span>
+
+<span class="n">n_iter</span> <span class="o">=</span> <span class="mi">1000</span>  
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span>  
+<span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n_iter</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>  
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">)</span>  
+    <span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">hinge_loss</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">w</span><span class="p">,</span> <span class="n">lambdh</span><span class="p">)</span>  
+      
+    <span class="n">gt</span> <span class="o">=</span> <span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">w</span><span class="p">,</span> <span class="n">lambdh</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>  
+    <span class="n">vt</span> <span class="o">=</span> <span class="p">(</span><span class="n">beta</span><span class="o">*</span><span class="n">vt</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">beta</span><span class="p">)</span><span class="o">*</span><span class="n">gt</span>   
+      
+    <span class="n">a</span> <span class="o">=</span> <span class="n">eta</span> <span class="o">*</span> <span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">w</span><span class="p">,</span> <span class="n">lambdh</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">vt</span><span class="p">)</span><span class="o">+</span><span class="n">eps</span>  
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">-</span><span class="n">a</span></code></pre></figure>
+
+<p><strong>Platt Scaling :</strong></p>
+
+<p>The following implementation is based on the paper published by Platt which is available <a href="http://citeseerx.ist.psu.edu/viewdoc/download;jsessionid=4DDE09F156D9C7B25755CE1B2B593F2F?doi=10.1.1.41.1639&amp;rep=rep1&amp;type=pdf">here</a>.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">platt_calib_parms</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">target</span><span class="p">,</span><span class="n">prior1</span><span class="p">,</span><span class="n">prior0</span><span class="p">):</span>
+    <span class="c1">#out = array of SVM outputs</span>
+    <span class="c1">#target = array of booleans: is ith example a positive example?</span>
+    <span class="c1">#prior1 = number of positive examples</span>
+    <span class="c1">#prior0 = number of negative examples</span>
+    <span class="no">A</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="no">B</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">log</span><span class="p">((</span><span class="n">prior0</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">prior1</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">hiTarget</span> <span class="o">=</span> <span class="p">(</span><span class="n">prior1</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">prior1</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">loTarget</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">prior0</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">lambdah</span> <span class="o">=</span> <span class="mf">1e-3</span>
+    <span class="n">olderr</span> <span class="o">=</span> <span class="mf">1e300</span>
+
+    <span class="n">pp</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">prior0</span><span class="o">+</span><span class="n">prior1</span><span class="p">)</span>      <span class="c1"># temp array to store urrent estimate of probability of examples</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)):</span>
+        <span class="n">pp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">prior1</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">prior0</span><span class="o">+</span><span class="n">prior1</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">it</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="mi">0</span> 
+        <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1">#compute Hessian &amp; gradient of error funtion with respet to A &amp; B</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">len</span><span class="p">(</span><span class="n">target</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">hiTarget</span>
+            <span class="ss">else:
+                </span><span class="n">t</span> <span class="o">=</span> <span class="n">loTarget</span>
+            <span class="n">d1</span> <span class="o">=</span> <span class="n">pp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">t</span>
+            <span class="n">d2</span> <span class="o">=</span> <span class="n">pp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">pp</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">a</span> <span class="o">+=</span> <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">d2</span>
+            <span class="n">b</span> <span class="o">+=</span> <span class="n">d2</span>
+            <span class="n">c</span> <span class="o">+=</span> <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">d2</span>
+            <span class="n">d</span> <span class="o">+=</span> <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">d1</span>
+            <span class="n">e</span> <span class="o">+=</span> <span class="n">d1</span>
+        <span class="c1">#If gradient is really tiny, then stop</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-9</span> <span class="n">and</span> <span class="n">abs</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-9</span><span class="p">):</span>
+            <span class="k">break</span>
+        <span class="n">oldA</span> <span class="o">=</span> <span class="no">A</span>
+        <span class="n">oldB</span> <span class="o">=</span> <span class="no">B</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="mi">0</span>
+    
+        <span class="c1">#Loop until goodness of fit inreases</span>
+    
+        <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">det</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">lambdah</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">b</span><span class="o">+</span><span class="n">lambdah</span><span class="p">)</span><span class="o">-</span><span class="n">c</span><span class="o">*</span><span class="n">c</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">det</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>  <span class="c1">#if determinant of Hessian is zero,inrease stabilizer</span>
+                <span class="n">lambdah</span> <span class="o">*=</span> <span class="mi">10</span>
+                <span class="n">ontinue</span>
+            <span class="no">A</span> <span class="o">=</span> <span class="n">oldA</span> <span class="o">+</span> <span class="p">((</span><span class="n">b</span><span class="o">+</span><span class="n">lambdah</span><span class="p">)</span><span class="o">*</span><span class="n">d</span><span class="o">-</span><span class="n">c</span><span class="o">*</span><span class="n">e</span><span class="p">)</span><span class="o">/</span><span class="n">det</span>
+            <span class="no">B</span> <span class="o">=</span> <span class="n">oldB</span> <span class="o">+</span> <span class="p">((</span><span class="n">a</span><span class="o">+</span><span class="n">lambdah</span><span class="p">)</span><span class="o">*</span><span class="n">e</span><span class="o">-</span><span class="n">c</span><span class="o">*</span><span class="n">d</span><span class="p">)</span><span class="o">/</span><span class="n">det</span>
+        
+            <span class="c1">#Now, ompute the goodness of fit</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">len</span><span class="p">(</span><span class="n">target</span><span class="p">)):</span>
+                <span class="nb">p</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">np</span><span class="p">.</span><span class="nf">exp</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="no">A</span><span class="o">+</span><span class="no">B</span><span class="p">))</span>
+                <span class="n">pp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">p</span>
+            
+                <span class="c1">#At this step, make sure log(0) returns -200</span>
+                <span class="n">err</span> <span class="o">-=</span> <span class="n">t</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nb">p</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="nb">p</span><span class="p">)</span>
+        
+            <span class="k">if</span> <span class="p">(</span><span class="n">err</span> <span class="o">&lt;</span> <span class="n">olderr</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mf">1e-7</span><span class="p">)):</span>
+                <span class="n">lambdah</span> <span class="o">*=</span> <span class="mf">0.1</span>
+                <span class="k">break</span>
+            <span class="c1">#error did not derease: inrease stabilizer by fator of 10 &amp; try again</span>
+            <span class="n">lambdah</span> <span class="o">*=</span> <span class="mi">10</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">lambdah</span> <span class="o">&gt;=</span> <span class="mf">1e6</span><span class="p">):</span>  <span class="c1"># Something is broken. Give up</span>
+                <span class="k">break</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="n">err</span><span class="o">-</span><span class="n">olderr</span>
+            <span class="n">sale</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">err</span><span class="o">+</span><span class="n">olderr</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">diff</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">1e-3</span><span class="o">*</span><span class="n">sale</span> <span class="n">and</span> <span class="n">diff</span> <span class="o">&lt;</span> <span class="mf">1e-7</span><span class="o">*</span><span class="n">sale</span><span class="p">):</span>
+                <span class="n">count</span><span class="o">+=</span><span class="mi">1</span>
+            <span class="ss">else:
+                </span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">olderr</span> <span class="o">=</span> <span class="n">err</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">count</span><span class="o">==</span><span class="mi">3</span><span class="p">):</span>
+                <span class="k">break</span>
+    <span class="k">return</span> <span class="no">A</span><span class="p">,</span><span class="no">B</span></code></pre></figure>
+
+<p>The code will return the parameters <strong><em>A</em></strong> and <strong><em>B.</em></strong> Now to get the probabilities :</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">target</span> <span class="o">=</span> <span class="n">y</span> <span class="c1">#True Labels  </span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">y_predicted</span> <span class="c1">#Predicted Labels</span>
+
+<span class="n">prior1</span> <span class="o">=</span> <span class="n">len</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">y</span><span class="o">==</span><span class="mi">1</span><span class="p">])</span> <span class="c1">#Number of positive samples  </span>
+<span class="n">prior0</span> <span class="o">=</span> <span class="n">len</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">y</span><span class="o">==-</span><span class="mi">1</span><span class="p">])</span> <span class="c1">#Number of negative samples  </span>
+<span class="no">A</span><span class="p">,</span><span class="no">B</span> <span class="o">=</span> <span class="n">platt_calib_parms</span><span class="p">(</span><span class="n">target</span><span class="p">,</span><span class="n">out</span><span class="p">,</span><span class="n">prior1</span><span class="p">,</span><span class="n">prior0</span><span class="p">)</span>
+
+<span class="c1">#Once we obtain A and B then :  </span>
+<span class="c1">#Probability that a datapoint belongs to Positive class :  </span>
+<span class="n">p_pos</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">np</span><span class="p">.</span><span class="nf">exp</span><span class="p">(</span><span class="no">A</span> <span class="o">*</span> <span class="n">out</span><span class="o">+</span><span class="no">B</span><span class="p">))</span> 
+
+<span class="c1">#Probability that a datapoint belongs to Negative class :  </span>
+<span class="n">p_neg</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="n">p_pos</span></code></pre></figure>
+
+<p>The full implementation along with the results and plots are available <a href="https://github.com/bitmask93/Linear_Models/blob/master/3%29SVM.ipynb">here</a>. In this implementation, I haven’t tested the results with that of Sklearn Implementation and the above dataset is created only for learning purpose and in real-world data will not be like this and you might have to do preprocessing before applying Machine Learning Models.</p>
+
+<h4 id="references">References :</h4>
+
+<ul>
+  <li><a href="https://davidrosenberg.github.io/mlcourse/Archive/2018/Lectures/03c.subgradient-descent.pdf">https://davidrosenberg.github.io/mlcourse/Archive/2018/Lectures/03c.subgradient-descent.pdf</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Support_vector_machine">https://en.wikipedia.org/wiki/Support_vector_machine</a></li>
+  <li><a href="http://acva2010.cs.drexel.edu/omeka/items/show/16561">http://acva2010.cs.drexel.edu/omeka/items/show/16561</a></li>
+  <li><a href="https://alex.smola.org/papers/2003/SmoSch03b.pdf">https://alex.smola.org/papers/2003/SmoSch03b.pdf</a></li>
+  <li><a href="http://citeseerx.ist.psu.edu/viewdoc/download;jsessionid=4DDE09F156D9C7B25755CE1B2B593F2F?doi=10.1.1.41.1639&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download;jsessionid=4DDE09F156D9C7B25755CE1B2B593F2F?doi=10.1.1.41.1639&amp;rep=rep1&amp;type=pdf</a></li>
+  <li><a href="https://people.eecs.berkeley.edu/~jordan/courses/281B-spring04/lectures/lec3.pdf">https://people.eecs.berkeley.edu/~jordan/courses/281B-spring04/lectures/lec3.pdf</a></li>
+  <li><a href="https://svivek.com/teaching/lectures/slides/svm/svm-sgd.pdf">https://svivek.com/teaching/lectures/slides/svm/svm-sgd.pdf</a></li>
+  <li><a href="https://www.youtube.com/watch?v=jYtCiV1aP44">https://www.youtube.com/watch?v=jYtCiV1aP44</a></li>
+  <li><a href="https://www.youtube.com/watch?v=vi7VhPzF7YY">https://www.youtube.com/watch?v=vi7VhPzF7YY</a></li>
+</ul>
+
+      <div class="page-footer">
+        <div class="page-share">
+          <a href="https://twitter.com/intent/tweet?text=Support Vector Machines & Gradient Descent&url=http://localhost:4000/Support-Vector-Machines-Gradient-Descent/" title="Share on Twitter" rel="nofollow" target="_blank">Twitter</a>
+          <a href="https://facebook.com/sharer.php?u=http://localhost:4000/Support-Vector-Machines-Gradient-Descent/" title="Share on Facebook" rel="nofollow" target="_blank">Facebook</a>
+          <a href="https://plus.google.com/share?url=http://localhost:4000/Support-Vector-Machines-Gradient-Descent/" title="Share on Google+" rel="nofollow" target="_blank">Google+</a>
+        </div>
+        <div class="page-tag">
+          
+            <a href="/ml-blog/tags#Data Science" class="tag">&#35; Data Science</a>
+          
+            <a href="/ml-blog/tags#Machine Learning" class="tag">&#35; Machine Learning</a>
+          
+            <a href="/ml-blog/tags#Math" class="tag">&#35; Math</a>
+          
+        </div>
+      </div>
+      <section class="comment-area">
+  <div class="comment-wrapper">
+    
+    <div id="disqus_thread" class="article-comments"></div>
+    <script>
+      (function() {
+          var d = document, s = d.createElement('script');
+          //var disqus_shortname = '';
+          s.src = '//jithin-1.disqus.com/embed.js';
+          //s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+  </div>
+</section> <!-- End Comment Area -->
+
+    </div> <!-- End Wrap Content -->
+  </div> <!-- End Page Content -->
+</article> <!-- End Article Page -->
+
+</div>
+
+  </div>
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', '', 'auto');
+  ga('send', 'pageview');
+</script> <!-- End Analytics -->
+
+</body>
+</html>

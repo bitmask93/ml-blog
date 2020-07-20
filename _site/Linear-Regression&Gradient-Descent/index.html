@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Linear Regression & Gradient Descent - Machine Learning Blogs</title>
+
+  <!-- Edit site and author settings in `_config.yml` to make the social details your own -->
+
+    <meta content="Machine Learning Blogs" property="og:site_name">
+  
+    <meta content="Linear Regression & Gradient Descent" property="og:title">
+  
+  
+    <meta content="article" property="og:type">
+  
+  
+    <meta content="In this blog, I will discuss about Linear Regression and Gradient Descent along with their implementation in Python." property="og:description">
+  
+  
+    <meta content="http://localhost:4000/Linear-Regression&Gradient-Descent/" property="og:url">
+  
+  
+    <meta content="2020-05-31T16:02:20+05:30" property="article:published_time">
+    <meta content="http://localhost:4000/about/" property="article:author">
+  
+  
+    <meta content="http://localhost:4000/ml-blog/assets/img/david-freeman.jpg" property="og:image">
+  
+  
+    
+  
+  
+    
+    <meta content="Data Science" property="article:tag">
+    
+    <meta content="Machine Learning" property="article:tag">
+    
+    <meta content="Math" property="article:tag">
+    
+  
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@">
+    <meta name="twitter:creator" content="@">
+  
+    <meta name="twitter:title" content="Linear Regression & Gradient Descent">
+  
+  
+    <meta name="twitter:url" content="http://localhost:4000/Linear-Regression&Gradient-Descent/">
+  
+  
+    <meta name="twitter:description" content="In this blog, I will discuss about Linear Regression and Gradient Descent along with their implementation in Python.">
+  
+  
+    <meta name="twitter:image:src" content="http://localhost:4000/ml-blog/assets/img/david-freeman.jpg">
+  
+
+	<meta name="description" content="In this blog, I will discuss about Linear Regression and Gradient Descent along with their implementation in Python.">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta property="og:image" content="">
+	<link rel="shortcut icon" href="/ml-blog/assets/img/favicon/favicon.ico" type="image/x-icon">
+	<link rel="apple-touch-icon" href="/ml-blog/assets/img/favicon/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/ml-blog/assets/img/favicon/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/ml-blog/assets/img/favicon/apple-touch-icon-144x144.png">
+	<!-- Chrome, Firefox OS and Opera -->
+	<meta name="theme-color" content="#263959">
+	<!-- Windows Phone -->
+	<meta name="msapplication-navbutton-color" content="#263959">
+	<!-- iOS Safari -->
+	<meta name="apple-mobile-web-app-status-bar-style" content="#263959">
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=PT+Serif:400,700|Lato:300,400,700&display=swap" rel="stylesheet">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="/ml-blog/assets/fonts/font-awesome/css/font-awesome.min.css">
+	<!-- Styles -->
+	<link rel="stylesheet" href="/ml-blog/assets/css/main.css">
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <aside class="sidebar">
+  <header>
+    <div class="about">
+      <div class="cover-author-image">
+        <a href="/ml-blog/"><img src="/ml-blog/assets/img/david-freeman.jpg" alt="Jithin J"></a>
+      </div>
+      <div class="author-name">Jithin J</div>
+      <p>Machine Learning Engineer. Interested in Machine Learning and Deep Learning.</p>
+    </div>
+  </header> <!-- End Header -->
+  <footer>
+    <section class="contact">
+      <h3 class="contact-title">Contact me</h3>
+      <ul>
+        
+          <li class="github"><a href="http://github.com/bitmask93" target="_blank"><i class="fa fa-github"></i></a></li>
+        
+        
+          <li class="linkedin"><a href="https://in.linkedin.com/in/jithin-j-a5b662170" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        
+        
+          <li class="email"><a href="mailto:jithinjayan1993@gmail.com"><i class="fa fa-envelope-o"></i></a></li>
+        
+      </ul>
+    </section> <!-- End Section Contact -->
+    <div class="copyright">
+      <p>2020 &copy; Jithin J</p>
+    </div>
+  </footer> <!-- End Footer -->
+</aside> <!-- End Sidebar -->
+<div class="content-box clearfix">
+  <article class="article-page">
+  <div class="page-content">
+    
+    
+    <div class="wrap-content">
+      <header class="header-page">
+        <h1 class="page-title">Linear Regression & Gradient Descent</h1>
+        <div class="page-date"><span>2020, May 31&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+      </header>
+      <h3>In this blog, I will discuss about Linear Regression and Gradient Descent along with their implementation in Python.</h3>
+
+<p><img src="https://cdn-images-1.medium.com/max/10368/0*O5R1cW3XdAn6KWW6" alt="Photo by [Fatos Bytyqi](https://unsplash.com/@fatosi?utm_source=medium&amp;utm_medium=referral) on [Unsplash](https://unsplash.com?utm_source=medium&amp;utm_medium=referral)" /><em>Photo by <a href="https://unsplash.com/@fatosi?utm_source=medium&amp;utm_medium=referral">Fatos Bytyqi</a> on <a href="https://unsplash.com?utm_source=medium&amp;utm_medium=referral">Unsplash</a></em></p>
+
+<hr />
+
+<h3 id="introduction">Introduction:</h3>
+
+<p>Linear Regression attempts to model the relationship between two variables by fitting a linear equation to the observed data. One variable is considered to be an explanatory variable(independent variable x) and other is considered to be a dependent variable(y). But first, we must understand if there is a relationship between the variables of interest: this does not necessarily mean one causes another but there is some significant association between the two variables. A scatterplot can be used to determine the strength of the relationship between the two variables. If there is no relationship between the exploratory and dependent variable, then there is no point in fitting a linear model.A valuable numerical association between two variables is the correlation coefficient which is a value between [-1,1] indicating the strength of association of the observed data for two variables. A linear regression line has an equation of the form:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595083613/lin-reg-gd/1_8u7vuXude5Zwn0QYbbJ2hg_mumpgo.png" /></div>
+
+<p>Here <strong>x</strong> is the independent or exploratory variable and <strong>y</strong> is the dependent variable, <strong>a</strong> is the intercept while <strong>b</strong> is the slope of the line.</p>
+
+<p>Let’s say our Dataset <strong>X</strong>is given as:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595083731/lin-reg-gd/1_UMSwDsw6M64ndmDVDXTEEQ_bo2gcc.png" /></div>
+
+<p>Where <strong><em>n</em></strong> is the number of features.</p>
+
+<p>Let the dependent variable be <strong><em>y</em></strong>, given as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595084322/lin-reg-gd/1_xOUr__k-kEoD17mp8jHSwg_z0aq8s.png" /></div>
+
+<p>Assuming that there is a linear dependency between <strong><em>x</em></strong> and <strong><em>y</em></strong>, the model prediction can be given as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595084340/lin-reg-gd/1_nFgQ2UKYoFeYqs2UHRHpdw_xhx4oa.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595084361/lin-reg-gd/1_YfoiKkST962QyfAGZhPwVw_vtj1st.png" /></div>
+
+<p>Using vector notation, we can write this as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595084382/lin-reg-gd/1_c7bznEc6mLD_ACzbH22KWw_oeqbnq.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595084403/lin-reg-gd/1_4GOEjVk6a84RyLq16THkDw_p7kuq7.png" /></div>
+
+<p>Now we can express the prediction matrix as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595084426/lin-reg-gd/1_o5qyVs2uhXTQtcGuxHeN6Q_qngqmr.png" /></div>
+
+<h3 id="linear-regression-assumptions-"><strong>Linear Regression Assumptions :</strong></h3>
+
+<ol>
+  <li>
+    <p><strong>Linearity:</strong> The relationship between <strong><em>X</em></strong> and <strong><em>Y</em></strong> must be linear. We can check this using Scatter Plots.</p>
+  </li>
+  <li>
+    <p><strong>Normality:</strong> For any value of <strong><em>X</em></strong> and <strong><em>Y</em></strong>, it should be normally distributed. We can check this using (Q-Q) plot. Normality can be checked with a goodness of fit test(K-S) test. When data is not normally distributed, we can use non-linear transformation(eg: log-transformation) to solve the issue.</p>
+  </li>
+  <li>
+    <p><strong>Homoscedasticity:</strong> This is a situation in which the random disturbance in the relationship between the independent variables and the dependent variable or noise is the same across all values of the independent variables.</p>
+  </li>
+  <li>
+    <p><strong>No or Little Multicollinearity:</strong> Multicollinearity happens when independent variables are too highly correlated with each other.</p>
+  </li>
+</ol>
+
+<h3 id="test-for-multicollinearity-"><strong>Test For Multicollinearity :</strong></h3>
+
+<p>1.<strong>Correlation Matrix:</strong> Compute Pearson’s Bivariate Correlation among all independent variables and correlation coefficient must be smaller than 1.</p>
+
+<p>2.<strong>Tolerence:</strong> Measures the influence of one independent variable on all the independent variables.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595084453/lin-reg-gd/1_CIImlWHiBQA2IwHV-uivNQ_booe2y.png" /></div>
+
+<ul>
+  <li>
+    <p>Regress each independent variable on all other independent value.</p>
+  </li>
+  <li>
+    <p>Subtract each R² value from 1.</p>
+  </li>
+  <li>
+    <p>If T&lt;1 =&gt; Might be multicollinearity.</p>
+  </li>
+  <li>
+    <p>If T&lt;0.01 =&gt; Multicollinearity.</p>
+  </li>
+</ul>
+
+<p>3.<strong>Variance Inflation Factor :</strong></p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595084479/lin-reg-gd/1_hzSNJY4FiRwqVSQi-PDEIQ_tis7lm.png" /></div>
+
+<ul>
+  <li>
+    <p>If VIF = 1, No multicollinearity.</p>
+  </li>
+  <li>
+    <p>If VIF = Between 1 and 5, then moderately correlated.</p>
+  </li>
+  <li>
+    <p>If VIF &gt; 5, then there is high correlation.</p>
+  </li>
+</ul>
+
+<p>Mean Centering could help solve the problem of Multicollinearity. Also remove independent variables with high VIF values.</p>
+
+<h2 id="training-linear-regression-">Training Linear Regression :</h2>
+
+<p>We need to measure the goodness of fit or how well the model fits the data.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595084507/lin-reg-gd/1_Vk1HYU8KqktkrNYB1vNkgA_mo4oqc.png" /></div>
+
+<div style="text-align:center"><a href="https://en.wikipedia.org/wiki/Linear_regression#/media/File:Linear_least_squares_example2.png">Source : Wikipedia</a>
+</div>
+
+<p>In linear regression, the observations (red) are assumed to be the result of random deviations (green) from an underlying relationship (blue) between a dependent variable (y) and an independent variable (x). In Linear Regression we try to minimize the deviations. How to measure this deviation. One Common metric for that is the Mean(Mean Square Error). The predictions(y) can be given as following:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595084550/lin-reg-gd/1_bdprPlrLxlbe613ORWP_dg_nkfxnt.png" /></div>
+
+<p>To train a Linear Regression model, we need to find the value of <strong><em>W</em></strong> that minimizes the MSE.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595084585/lin-reg-gd/1_w69MDwuynzy-gkJA3k3S0w_vsniu2.png" /></div>
+
+<p>There is a closed form equation to find the <strong><em>W</em></strong> that minimizes this loss/cost function also called Normal Equation which is given as:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595084615/lin-reg-gd/1_MGiuT6aCgLNAPMEjIEbXDg_pg9fsk.png" /></div>
+
+<p>For the derivation of the above closed form equation click <a href="https://en.wikipedia.org/wiki/Linear_regression#Least-squares_estimation_and_related_techniques">here</a></p>
+
+<p>Ŵ is the value of W that minimizes the loss function. <strong><em>y</em></strong> = Vector of target values containing {y ¹….yᵐ} . However computing the inverse of for an n×n matrix is about O(n³) depending on the implementation. Hence this is a very slow process. However for extremely large datasets that might not fit into RAM, this method cannot be applied. But Predictions are extremely fast≈O(<em>m</em>) where <em>m</em> = number of features.</p>
+
+<h2 id="gradient-descent">Gradient Descent</h2>
+
+<p>This is a generic optimization technique capable of finding optimal solutions to a wide range of problems. Thee General idea is to tweak the parameters iteratively to minimize a cost function. For a GD to work, the loss function must be differentiable. This method is also called the steepest descent method.</p>
+
+<p><img src="https://cdn-images-1.medium.com/max/4122/1*dyoyZoo5F3ekWs4ZRC5bCw.jpeg" alt="Image by Author" /><em>Image by Author</em></p>
+
+<ul>
+  <li>
+    <p>If Learning Rate = too small =&gt; Takes too much time to converge.</p>
+  </li>
+  <li>
+    <p>If Learning Rate = Large =&gt; May not converge as it misses the minimum.</p>
+  </li>
+</ul>
+
+<p>Gradient Descent works well when there are convex functions. What if the functions are not convex like the below figure :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595084658/lin-reg-gd/1_6ldM8dCiLnYRGOPkBWqL2Q_acrmra.png" /></div>
+
+<div style="text-align:center"><a href="https://www.cs.cornell.edu/courses/cs6787/2017fa/Lecture7.pdf">Source</a>
+</div>
+
+<p>Here depending on the initial starting point, the Gradient Descent may end up stuck in local minima. In this case we can reset the initial value and do gradient descent again. However the Loss function for Linear Regression(MSE) is a convex function ie if we pick any two points in the curve, the line segment joining them never crosses the line. This means that there are no local minima but a single global minimum and also it is a continuous function. Gradient Descent is guaranteed to approach arbitrarily close to the global minimum. Training a model means searching for a combination of model parameters that minimizes the Loss function.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595084709/lin-reg-gd/1_Nt-sJ_K1x6Tm4Poc7XJ-Vw_l0iygh.png" /></div>
+
+<p>We need to find a direction where function decreases and we need to take a step in this direction.</p>
+
+<p>Optimization Problem:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595084985/lin-reg-gd/1_pvvybI7gv7yronkJGELXOw_lzzajv.png" /></div>
+
+<p>Let the initial weights be <strong><em>w⁰</em></strong>. The gradient vector is given by :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085009/lin-reg-gd/1_Dy1KRD5zqor2qdtO-jGHeg_psxfom.png" /></div>
+
+<p>This Gradient Vector points in the direction of Steepest Ascent at <em>**w⁰. **</em>This function has a fast decreasing rate in the direction of negative gradient.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085026/lin-reg-gd/1_9CXsKfhcF_bapQ6uLmL8SQ_skfb5x.png" /></div>
+
+<p>In matrix Notation we can write this as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085046/lin-reg-gd/1_bXOn_Fyu8-tl-AR9yqqTwA_ry2msg.png" /></div>
+
+<p><strong>Gradient Descent Step :</strong></p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085066/lin-reg-gd/1_2EY4hABh-E8S9b0vuTCwKQ_yp2ycs.png" /></div>
+
+<p>Where 𝜂 = Learning Rate</p>
+
+<p>When 𝜂 = too small =&gt; The Algorithm eventually reach the optimal solution, but it will take too much time.</p>
+
+<p>When 𝜂 = too large =&gt; The Algorithm diverges jumping all over the place and actually getting further and further away from the solution at every step.</p>
+
+<p>We can use GridSearch to find a good Learning Rate. We can set the number of iterations to be large but to interrupt the algorithm when the gradient vector becomes tiny, we can calculate the norm of the Gradient vector at every step and if it is less than a tiny value (ϵ), Gradient Descent has reached minimum so we must halt the Gradient Descent. Gradient Descent works even in spaces of any number of dimensions even in infinite dimension ones.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085086/lin-reg-gd/1_WC7_8QmGUwWCDYJ_QpdDkg_nuw721.png" /></div>
+
+<h2 id="stochastic-gradient-descent">Stochastic Gradient Descent</h2>
+
+<p>Batch Gradient Descent or Gradient Descent requires the whole training set in memory to compute the gradients at every step. This makes it slow when train set is huge. Also if the training dataset doesn’t fit the memory we might not be able to use Gradient Descent. In Stochastic Gradient Descent(SGD), we just pick a random instance in the training set at each step and then compute the gradients based only on that single instance. This makes the algorithm fast since it has very little data to manipulate at every iteration. It also makes possible to train huge datasets that does not fit into memory. Due to it’s Stochastic(random) nature, the algorithm is much less regular than G.D. instead of decreasing till it reaches the minimum, the Loss function will bounce up and down, decreasing only on average ie it leads to Noisy updates. Over the time it will end up closer to minimum, but once it gets there it will continue to bounce around, never settling down. Once Algorithm stops final parameters are good but not optimal. Each step is a lot faster to compute for SGD than for GD, as it uses only one training example. One advantage of having such updates is that, when there is an irregular function, then this can help the algorithm jump out of local minima, So SGD has better chance of finding global minimum than Gradient Descent.</p>
+
+<p>This Randomness can help to avoid local minima, but what if the algorithm never settle at a minimum? The following are some of the hacks that could be used to avoid such a situation:</p>
+
+<ul>
+  <li>
+    <p>Gradually reduce the learning rate. The algorithm starts with large Learning Rate and then slowly reduce the learning rate and it becomes smaller and smaller allowing the algorithm to settle at Global minimum. This is called <strong>simulated annealing</strong>.</p>
+  </li>
+  <li>
+    <p>The function that determines the Learning Rate at each iteration is called <strong>learning rate scheduler.</strong></p>
+  </li>
+</ul>
+
+<p>However the following cases must be taken care of :</p>
+
+<ul>
+  <li>
+    <p>If Learning Rate is reduced too quickly, then the algorithm may get stuck in Local minima or Frozen halfway.</p>
+  </li>
+  <li>
+    <p>If Learning Rate is reduced too slowly, then we might jump around the minimum for a long time and end up in suboptimal solution.</p>
+  </li>
+</ul>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085106/lin-reg-gd/1_GBewo5Peth1AA3dgX0P-cQ_oxhoxy.png" /></div>
+
+<h2 id="mini-batch-stochastic-gradient-descent">Mini-Batch Stochastic Gradient Descent</h2>
+
+<p>Here, instead of computing gradients based on full training set (or) just a single instance, mini-batch GD computes the gradients on small random sets of instances called <strong>mini-batches</strong>. The main advantage of mini-batch SGD over SGD is that we can get performance boost from hardware optimization of matrix operations especially with a GPU. Both Mini-Batch SGD as well as SGD tends to walk around minimum but GD will converge to minimum, however GD takes more time to take each step. Both SGD and mini-batch SGD would also reach minimum if good learning rate is chosen.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085128/lin-reg-gd/1_WRjMJhD8k7CcPe7LgaAt7A_ha2wuy.png" /></div>
+
+<p>The difference between Gradient Descent, Mini-Batch Gradient Descent and Stochastic Gradient Descent is the number of examples used to perform a single updation step.</p>
+
+<h2 id="polynomial-regression">Polynomial Regression</h2>
+
+<p>What if the data is more complex than simple straight line and cannot be fit with simple Linear Regression. Polynomial Regression is a regression analysis in which the relationship between an independent variable(<strong><em>X</em></strong>) and dependent variable(<strong><em>y</em></strong>) is modelled as an n th degree polynomial in <strong><em>X</em></strong>. Fits a non-linear relationship between the value <strong><em>x</em></strong> and corresponding conditional mean of <strong><em>y</em></strong> denoted as : E(y|x). Although polynomial regression fits a non-linear model to the data, as a statistical estimation problem, it is linear, in the sense that the regression function E(y|x) is linear in the unknown parameters that are estimated from the data. Polynomial regression is considered as special case of multiple linear regression. The goal of Polynomial Regression is to model the expected value of dependent variable <strong><em>y</em></strong> in terms of independent variable(or vector of independent variables) <strong><em>x</em></strong>. The model prediction for a simple Linear Regression is given as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085159/lin-reg-gd/1_FXKDAx5mAqlguTpviosCFQ_pp4gah.png" /></div>
+
+<p>In many settings, such a linear relationship may not hold. A quadratic model of the form will be like:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085181/lin-reg-gd/1_WQogWF1MOnuR5Ml8CijJYQ_jhwtu0.png" /></div>
+
+<p>In general, we can model an expected value of <strong><em>y</em></strong> as an <em>n</em>th degree polynomial, yielding the general polynomial regression model:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085226/lin-reg-gd/1_q4QjJpyA_MLl5nlKtwbfuQ_uclcdn.png" /></div>
+
+<p>The models are all linear from the point of view of estimation, since the regression function is linear in terms of the unknown parameters w0,…,wn.</p>
+
+<p>So for Least Squares analysis, the computational and Inferential problem of polynomial regression can be completely addressed using the techniques of multiple regression. This is done by treating x, x²….. as being distinct independent variables in a multiple regression model.</p>
+
+<h3 id="matrix-form-and-calculation-of-estimates">Matrix form and Calculation of estimates</h3>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085367/lin-reg-gd/1_DYG4q155giR8485jH65jKw_t4x9wf.png" /></div>
+
+<p>This can be expressed in matrix notation as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085395/lin-reg-gd/1_xCK-WZz1x6j_XEq9UvuPMg_srmj3u.png" /></div>
+
+<p>In pure Matrix Notation, this can be expressed as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085418/lin-reg-gd/1_LGrObKkajRjpViqBiIzejQ_llvdvl.png" /></div>
+
+<p>The closed form solution for the this is given as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085443/lin-reg-gd/1_EnAl8BUgsCmOFX_KsiIPOQ_svusxb.png" /></div>
+
+<p>We can solve this using Gradient Descent as well.</p>
+
+<h2 id="regularized-linear-models">Regularized Linear Models</h2>
+
+<h3 id="overfitting-">Overfitting :</h3>
+
+<p>This occurs when a statisticsl model/ ML algorithm captures the noise of the data or intuitively it happens when model (or) algorithm fits data too well. Specifically Overfitting Occurs if the model (or) Algorithm shows low bias but high Variance. Overfitting models perform well on training data but generalizes poorly according to Cross-Validation metrics.</p>
+
+<p><strong>How to prevent it :</strong></p>
+
+<ul>
+  <li>
+    <p>Cross-Validation</p>
+  </li>
+  <li>
+    <p>Train with more data</p>
+  </li>
+  <li>
+    <p>Feature Selection</p>
+  </li>
+  <li>
+    <p>Early Stopping</p>
+  </li>
+  <li>
+    <p>Regularization</p>
+  </li>
+  <li>
+    <p>Ensembling</p>
+  </li>
+</ul>
+
+<h3 id="underfitting-">Underfitting :</h3>
+
+<p>This occurs when a statistical model/ML algorithm cannot capture the underlying trend in the data or intuitively it happens when the model/Algorithm does not fit the data well enough. Specifically, underfitting occurs if model (or) Algorithm shows low variance but high bias. This is a result of excessively simple model. Underfitted models perform poorly in both train and validation data set.</p>
+
+<p><strong>How to prevent it :</strong></p>
+
+<ul>
+  <li>
+    <p>Increase the number of Parameters in ML models</p>
+  </li>
+  <li>
+    <p>Increase complexity of the model</p>
+  </li>
+  <li>
+    <p>Increasing the training time untill cost function in ML model is minimized.</p>
+  </li>
+</ul>
+
+<h3 id="generalization-error-">Generalization Error :</h3>
+
+<p>Generalization error can be classified into 3 types. They are :</p>
+
+<ul>
+  <li>
+    <p><strong>Bias</strong> : This is due to wrong assumptions such as like data is linear when it is actually quadratic. When a model has high bias then it indicates that the model is an underfit model.</p>
+  </li>
+  <li>
+    <p><strong>Variance</strong> : This is due to model’s excessive sensitivity to small variations in the training data. A model with high degrees of freedom(higher degree polynomial) is likely to have high variance and thus overfit the training data.</p>
+  </li>
+  <li>
+    <p><strong>Irreducible Error</strong> : This is due to noisiness in the data, this can be reduced by cleaning the data properly.</p>
+  </li>
+</ul>
+
+<p><strong>Bias-Variance tradeoff :</strong></p>
+
+<p>Increase in model’s complexity will typically increase it’s Variance and reduce it’s bias. Reducing a model’s complexity will typically increase it’s bias and reduce it’s variance. This is why it is called as Bias-Variance Tradeoff.</p>
+
+<h3 id="ridge-regression-">Ridge Regression :</h3>
+
+<p>A good way to reduce overfitting is to regularize the model. The fewer degrees of freedom it has the harder it will be for the model to overfit the data. eg: A simple way to regularize a polynomial model is to reduce the number of polynomial degrees. Ridge regression is a regularized version of Linear Regression with regularization term added to it. The regularization term is given as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085472/lin-reg-gd/1_wWHZxkUz5-zi7eZp7R7S-Q_vsyxu4.png" /></div>
+
+<p>This forces the Learning Algorithm to not only fit the data, but also keep the model weights as small as possible. Regularization term must be added to the loss function only during training. Once the model is trained, we evaluate the model using unregularized performance measure. The hyperparameter <strong><em>α</em></strong> controls how much we want to regularize the models:</p>
+
+<ul>
+  <li>
+    <p>If <strong><em>α</em></strong> = 0, Then Ridge Regression becomes Linear Regression.</p>
+  </li>
+  <li>
+    <p>If <strong><em>α</em></strong> = V.large, then all weights end up close to zero and results in a flat line going through the mean of data.</p>
+  </li>
+</ul>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085499/lin-reg-gd/1_5ixnHvEmYdUwRoonxMFv2g_uiltcr.png" /></div>
+
+<p>Here the bias term <strong><em>w⁰</em></strong> is not regularized.</p>
+
+<p>If <strong><em>w</em></strong> is the weight vector, then the regularization term is simply equal L2 norm of the weight vector. There exists a closed-form solution to Ridge regression, which is given as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085527/lin-reg-gd/1_fNqvPSwJu1jVp9pzTCIdnQ_mijaik.png" /></div>
+
+<p>Where <strong>A</strong> is an <em>n×n</em> identity matrix except with 0 in top-left which corresponds to the bias term.</p>
+
+<h3 id="lasso-regression-">Lasso Regression :</h3>
+
+<p>Lasso(Least Absolute Shrinkage &amp; Selection Operator Regression) is a Regularized version of Linear Regression. Adds a regularization term to the Loss function. It uses <strong><em>L1</em></strong> norm of weight vector instead of <strong><em>L2</em></strong> norm.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085558/lin-reg-gd/1_lDTnod7aznB0SjLQJDJ9ow_m6ww4v.png" /></div>
+
+<p>An important characteristic of <strong><em>L1</em></strong> regularization is that it completely eliminates the weights of least importance(ie set them to 0). Lasso Regression automatically performs feature selection and outputs a sparse model.Lasso function is not differentiable at <strong><em>wi **</em>= 0(for <em>i=1,2,3…n</em>). But GD. still works fine if we use a subgradient vector instead when any **<em>wi</em></strong>=0.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085590/lin-reg-gd/1_rqyOVSM9Sr9xgl21tSe9YA_fwmj8c.png" /></div>
+
+<h3 id="elastic-net-">Elastic Net :</h3>
+
+<p>It is in between Ridge and Lasso Regression. The regularization term is a simple mix of both Ridge and Lasso Regression terms and we can control it with the mix ratio(<strong><em>r</em></strong>).</p>
+
+<ul>
+  <li>
+    <p>If <em>r=0</em> = &gt; E.N ≈Ridge Regression</p>
+  </li>
+  <li>
+    <p>If <em>r=1</em> = &gt; E.N ≈Lasso Regression</p>
+  </li>
+</ul>
+
+<p><strong>when do we choose Elastic Net over plain L.R :</strong></p>
+
+<ul>
+  <li>
+    <p>It is always preferable to have atleast a bit of regularization, so generally you should avoid plain LR.</p>
+  </li>
+  <li>
+    <p>Ridge is good, but if we need to apply feature selection also, then go for Lasso or EN. since they tend to reduce the weights of useless features down to zero.</p>
+  </li>
+  <li>
+    <p>Elastic Net is preferred over Lasso since Lasso may behave erratically when the number of Features is greater than the number of training instances (or) when several features are strongly correlated.</p>
+  </li>
+</ul>
+
+<h2 id="extentions-to-gradient-descent">Extentions to Gradient Descent</h2>
+
+<h3 id="momentum-approach">Momentum Approach</h3>
+
+<p>Stochastic gradient descent with momentum remembers the update <strong><em>Δw</em></strong> at each iteration, and determines the next update as a linear combination of the gradient and the previous update. Here an additional vector (<em>h</em>) is maintained at every iteration.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085634/lin-reg-gd/1_sy75Y131eb-OphUuBtA3Xg_dum6qs.png" /></div>
+
+<p><strong><em>ht</em></strong> = Weighted sum of gradients from all the previous iteration and from this iteration also. Tends to move in the same direction as of previous steps. <strong><em>ht</em></strong> cancels some coordinates that lead to oscillation of gradients and help to achieve better convergence. ie the momentum term increases for dimensions whose gradients point in the same directions and reduces updates for dimensions whose gradients change directions. As a result, we gain faster convergence and reduced oscillation. when using momentum, imagine that we push a ball down a hill. The ball accumulates momentum as it rolls downhill, becoming faster and faster on the way (until it reaches its terminal velocity if there is air resistance, i.e. <strong><em>α&lt;1. ht</em></strong> accumulates values along dimensions where the gradients have same sign. Usually <strong><em>α</em></strong> = 0.9.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085696/lin-reg-gd/1_ZWmZt34I3wTgOtUUAKE6iQ_h5h3cv.png" /></div>
+
+<div style="text-align:center"><a href="https://www.researchgate.net/figure/The-compare-of-the-SGD-algorithms-with-and-without-momentum-Take-Task-1-as-example-The_fig1_333469047">Source</a>
+</div>
+
+<h3 id="nestrov-accelerated-momentum">Nestrov Accelerated Momentum</h3>
+
+<p>A ball that rolls down a hill, blindly following the slope, is highly unsatisfactory. We’d like to have a smarter ball, a ball that has a notion of where it is going so that it knows to slow down before the hill slopes up again.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085800/lin-reg-gd/1_ucwOLKQAZazFWIlB4Aj82Q_zj2bku.png" /></div>
+
+<p>Here we first step in the direction of <strong><em>ht</em></strong> to get some new approximation of parameter vector and then calculate gradient at the new point. And then move in the negative of that gradient vector this can be clearly seen from the above diagram. Both Nestrov Accelerated Momentum as well as Momentum approach is sensitive to learning rate(<strong><em>η</em></strong>).</p>
+
+<h3 id="adagrad-">AdaGrad :</h3>
+
+<p>Adagrad is a modified SGD with per-parameter learning rate. This increases the learning rate for sparser parameters and decreases the learning rate for ones that are less sparse. Improves convergence performance over standard stochastic gradient descent in settings where data is sparse and sparse parameters are more informative. Examples of such applications include natural language processing and image recognition.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085909/lin-reg-gd/1_ImubVn49ZuQXQZBC6HP7iQ_bznewh.png" /></div>
+
+<p><strong><em>gt,j</em></strong> = Gradient at iteration t with respect to parameter j. Here base learning rate can be fixed : <strong><em>ηt</em></strong> = 0.01. <strong><em>G</em></strong>= Sum of squares of gradients from all previous iterations. <strong><em>Gtj</em></strong> always increases which leads to early stopping which is a bit of problem too because sometimes <strong>G</strong> becomes too large that it results in stopping before it reaches the minimum. AdaGrad can be applied to non-convex optimization problems also.</p>
+
+<h3 id="rmsprop">RMSProp</h3>
+
+<p>RMSProp (for Root Mean Square Propagation) is also a method in which the learning rate is adapted for each of the parameters. RMSprop divides the learning rate by an exponentially decaying average of squared gradients.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085929/lin-reg-gd/1_EnBDTKAkiwQjTC2U9E7GEw_bpq5nz.png" /></div>
+
+<p>RMSProp has shown excellent adaptation of learning rate in different applications. RMSProp can work with mini-batches as well. Typically <strong><em>α</em></strong> = 0.9 and default value of learning rate is set to <strong><em>η</em></strong>=0.001.</p>
+
+<h3 id="adam">Adam</h3>
+
+<p>Adaptive Moment Estimation(Adam) is an update to the RMSProp optimizer ie it computes the learning rates for each parameters adaptively. In addition to storing an exponentially decaying average of past squared gradients like, Adam also keeps an exponentially decaying average of past gradients, similar to momentum. Momentum can be seen as a ball running down a slope, Adam behaves like a heavy ball with friction, which thus prefers flat minima in the error surface.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595085952/lin-reg-gd/1_oyyOLV1JpRj0TwJecWj1Fw_m3kbwr.png" /></div>
+
+<p>The approximation <strong><em>V</em></strong> has bias towards 0 especially at initial steps cos we initialize <strong><em>β2</em></strong> with 0. So iorder to get rid of this bias, we divide by <strong><em>1−β2t</em></strong>. This normalization allows to get rid of the bias.</p>
+
+<p>Now let’s implement Linear Regression using some of the methods described above. Here we will use only min-batch SGD and it’s variations in python.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">    <span class="c1">#Create random set of Examples : </span>
+    <span class="no">X</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="no">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">*</span> <span class="no">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="no">X</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="o">-</span><span class="mi">3</span> <span class="o">*</span> <span class="no">X</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span>  
+    <span class="c1"># True Weights = [3,10,-2,-3]</span></code></pre></figure>
+
+<p>Here for simplicity we will not consider the bias(intercept) term.</p>
+
+<p>Let’s define the loss function :</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">    <span class="c1"># Define the MSE loss function</span>
+    <span class="k">def</span> <span class="nf">mse_loss</span><span class="p">(</span><span class="no">X</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+        <span class="n">pred</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="no">X</span><span class="p">,</span><span class="n">w</span><span class="p">)</span>
+        <span class="n">mse</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">square</span><span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">pred</span><span class="p">)).</span><span class="nf">mean</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">mse</span></code></pre></figure>
+
+<p>Let’s define a function to compute the Gradients:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">    <span class="c1">#This will return the gradients</span>
+    <span class="k">def</span> <span class="nf">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="n">m</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="no">X</span><span class="o">.</span><span class="no">T</span><span class="p">,</span><span class="n">np</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="no">X</span><span class="p">,</span><span class="n">w</span><span class="p">)</span><span class="o">-</span><span class="n">y</span><span class="p">)</span></code></pre></figure>
+
+<p>Simple mini-batch SGD</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#Initial Weights</span>
+    <span class="n">eta</span><span class="o">=</span> <span class="mf">0.1</span> <span class="c1"># learning rate</span>
+
+    <span class="n">n_iter</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1"># Number of Iterations</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span> <span class="c1">#Batch Size</span>
+
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n_iter</span><span class="p">)</span> <span class="c1">#List to store the loss at each iteration</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">)</span> <span class="c1">#random indices</span>
+        
+        <span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mse_loss</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span> <span class="c1">#compute loss</span>
+        
+        <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">-</span> <span class="n">eta</span><span class="o">*</span><span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span> <span class="c1">#weight updation</span></code></pre></figure>
+
+<p>Here I’am storing the loss at each iteration in a list, so that later it can be used to plot the loss as well as apply early stopping. I haven’t incorporated that here but in the full implementation present in my Github, I have incorporated those changes.</p>
+
+<p>mini-batch SGD with Momentum:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">eta</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1"># learning rate</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="c1"># momentum</span>
+
+    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros_like</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>  <span class="c1">#This is the additional vector</span>
+
+    <span class="n">n_iter</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n_iter</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">)</span>
+        
+        <span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mse_loss</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span>
+        
+        <span class="n">h</span> <span class="o">=</span> <span class="n">alpha</span><span class="o">*</span><span class="n">h</span> <span class="o">+</span> <span class="n">eta</span><span class="o">*</span><span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span> <span class="c1">#update 'h'</span>
+        
+        <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">-</span><span class="n">h</span> <span class="c1">#Weight updation</span></code></pre></figure>
+
+<p>mini-batch SGD With Nestrov accelerated momentum:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#Initial Weights</span>
+
+    <span class="n">eta</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1"># learning rate</span>
+
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="c1"># momentum</span>
+
+    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros_like</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>  <span class="c1">#This is the additional vector</span>
+
+    <span class="n">n_iter</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n_iter</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">)</span>
+        
+        <span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mse_loss</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span>
+        
+        <span class="n">h</span> <span class="o">=</span> <span class="n">alpha</span><span class="o">*</span><span class="n">h</span> <span class="o">+</span> <span class="n">eta</span><span class="o">*</span><span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="o">-</span><span class="n">alpha</span><span class="o">*</span><span class="n">h</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span>  
+        
+        <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">-</span><span class="n">h</span></code></pre></figure>
+
+<p>As you can clearly see the the only change in nestrov accelerated momentum is in the updation of the vector <em>h.</em></p>
+
+<p>RMSProp :</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#Initial Weights</span>
+
+    <span class="n">eta</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1"># learning rate</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="c1"># momentum</span>
+    <span class="n">gt</span> <span class="o">=</span> <span class="no">None</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-8</span>
+
+    <span class="n">n_iter</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n_iter</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">)</span>
+        <span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mse_loss</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span>
+        
+        <span class="n">gt</span> <span class="o">=</span> <span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">gt</span> <span class="o">=</span> <span class="n">alpha</span><span class="o">*</span><span class="n">gt</span> <span class="o">+</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span><span class="o">*</span><span class="n">gt</span>
+        
+        <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">-</span><span class="p">(</span><span class="n">eta</span><span class="o">*</span><span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">]))</span><span class="o">/</span><span class="n">np</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">gt</span><span class="o">+</span><span class="n">eps</span><span class="p">)</span></code></pre></figure>
+
+<p>Adam :</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#Initial Weights</span>
+
+    <span class="n">eta</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1"># learning rate</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="c1"># momentum</span>
+    <span class="n">gt</span> <span class="o">=</span> <span class="no">None</span>
+    <span class="n">vt</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="mf">0.0005</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-8</span>
+
+    <span class="n">n_iter</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n_iter</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">)</span>
+        <span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mse_loss</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span>
+        
+        <span class="n">gt</span> <span class="o">=</span> <span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
+        
+        <span class="n">vt</span> <span class="o">=</span> <span class="p">(</span><span class="n">beta</span><span class="o">*</span><span class="n">vt</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">beta</span><span class="p">)</span><span class="o">*</span><span class="n">gt</span> 
+        
+        <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">-</span><span class="p">(</span><span class="n">eta</span><span class="o">*</span><span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">]))</span><span class="o">/</span><span class="n">np</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">vt</span><span class="p">)</span><span class="o">+</span><span class="n">eps</span></code></pre></figure>
+
+<p>The full implementation along with plots can be found in my Github account <a href="https://github.com/bitmask93/Linear_Models/blob/master/1%29Linear_Regression%2BGD.ipynb">here</a>.</p>
+
+<h3 id="references-"><strong>References :</strong></h3>
+
+<ul>
+  <li>
+    <p><a href="https://en.wikipedia.org/wiki/Linear_regression">https://en.wikipedia.org/wiki/Linear_regression</a></p>
+  </li>
+  <li>
+    <p><a href="https://datascience-enthusiast.com/DL/Optimization_methods.html">https://datascience-enthusiast.com/DL/Optimization_methods.html</a></p>
+  </li>
+  <li>
+    <p><a href="https://statisticsbyjim.com/regression/multicollinearity-in-regression-analysis/">https://statisticsbyjim.com/regression/multicollinearity-in-regression-analysis/</a></p>
+  </li>
+  <li>
+    <p><em>Sebastian Ruder (2016). An overview of gradient descent optimisation algorithms. arXiv preprint arXiv:1609.04747.</em></p>
+  </li>
+  <li>
+    <p><a href="https://en.wikipedia.org/wiki/Polynomial_regression">https://en.wikipedia.org/wiki/Polynomial_regression</a></p>
+  </li>
+</ul>
+
+      <div class="page-footer">
+        <div class="page-share">
+          <a href="https://twitter.com/intent/tweet?text=Linear Regression & Gradient Descent&url=http://localhost:4000/Linear-Regression&Gradient-Descent/" title="Share on Twitter" rel="nofollow" target="_blank">Twitter</a>
+          <a href="https://facebook.com/sharer.php?u=http://localhost:4000/Linear-Regression&Gradient-Descent/" title="Share on Facebook" rel="nofollow" target="_blank">Facebook</a>
+          <a href="https://plus.google.com/share?url=http://localhost:4000/Linear-Regression&Gradient-Descent/" title="Share on Google+" rel="nofollow" target="_blank">Google+</a>
+        </div>
+        <div class="page-tag">
+          
+            <a href="/ml-blog/tags#Data Science" class="tag">&#35; Data Science</a>
+          
+            <a href="/ml-blog/tags#Machine Learning" class="tag">&#35; Machine Learning</a>
+          
+            <a href="/ml-blog/tags#Math" class="tag">&#35; Math</a>
+          
+        </div>
+      </div>
+      <section class="comment-area">
+  <div class="comment-wrapper">
+    
+    <div id="disqus_thread" class="article-comments"></div>
+    <script>
+      (function() {
+          var d = document, s = d.createElement('script');
+          //var disqus_shortname = '';
+          s.src = '//jithin-1.disqus.com/embed.js';
+          //s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+  </div>
+</section> <!-- End Comment Area -->
+
+    </div> <!-- End Wrap Content -->
+  </div> <!-- End Page Content -->
+</article> <!-- End Article Page -->
+
+</div>
+
+  </div>
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', '', 'auto');
+  ga('send', 'pageview');
+</script> <!-- End Analytics -->
+
+</body>
+</html>

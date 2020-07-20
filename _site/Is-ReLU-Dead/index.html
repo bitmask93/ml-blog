@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Is ReLU Dead? - Machine Learning Blogs</title>
+
+  <!-- Edit site and author settings in `_config.yml` to make the social details your own -->
+
+    <meta content="Machine Learning Blogs" property="og:site_name">
+  
+    <meta content="Is ReLU Dead?" property="og:title">
+  
+  
+    <meta content="article" property="og:type">
+  
+  
+    <meta content="In this Article, I will discuss the problem of dying Relu and how to identify them using Tensorboard" property="og:description">
+  
+  
+    <meta content="http://localhost:4000/Is-ReLU-Dead/" property="og:url">
+  
+  
+    <meta content="2019-10-26T16:02:20+05:30" property="article:published_time">
+    <meta content="http://localhost:4000/about/" property="article:author">
+  
+  
+    <meta content="http://localhost:4000/ml-blog/assets/img/david-freeman.jpg" property="og:image">
+  
+  
+    
+  
+  
+    
+    <meta content="Machine Learning" property="article:tag">
+    
+    <meta content="Deep Learning" property="article:tag">
+    
+  
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@">
+    <meta name="twitter:creator" content="@">
+  
+    <meta name="twitter:title" content="Is ReLU Dead?">
+  
+  
+    <meta name="twitter:url" content="http://localhost:4000/Is-ReLU-Dead/">
+  
+  
+    <meta name="twitter:description" content="In this Article, I will discuss the problem of dying Relu and how to identify them using Tensorboard">
+  
+  
+    <meta name="twitter:image:src" content="http://localhost:4000/ml-blog/assets/img/david-freeman.jpg">
+  
+
+	<meta name="description" content="In this Article, I will discuss the problem of dying Relu and how to identify them using Tensorboard">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta property="og:image" content="">
+	<link rel="shortcut icon" href="/ml-blog/assets/img/favicon/favicon.ico" type="image/x-icon">
+	<link rel="apple-touch-icon" href="/ml-blog/assets/img/favicon/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/ml-blog/assets/img/favicon/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/ml-blog/assets/img/favicon/apple-touch-icon-144x144.png">
+	<!-- Chrome, Firefox OS and Opera -->
+	<meta name="theme-color" content="#263959">
+	<!-- Windows Phone -->
+	<meta name="msapplication-navbutton-color" content="#263959">
+	<!-- iOS Safari -->
+	<meta name="apple-mobile-web-app-status-bar-style" content="#263959">
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=PT+Serif:400,700|Lato:300,400,700&display=swap" rel="stylesheet">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="/ml-blog/assets/fonts/font-awesome/css/font-awesome.min.css">
+	<!-- Styles -->
+	<link rel="stylesheet" href="/ml-blog/assets/css/main.css">
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <aside class="sidebar">
+  <header>
+    <div class="about">
+      <div class="cover-author-image">
+        <a href="/ml-blog/"><img src="/ml-blog/assets/img/david-freeman.jpg" alt="Jithin J"></a>
+      </div>
+      <div class="author-name">Jithin J</div>
+      <p>Machine Learning Engineer. Interested in Machine Learning and Deep Learning.</p>
+    </div>
+  </header> <!-- End Header -->
+  <footer>
+    <section class="contact">
+      <h3 class="contact-title">Contact me</h3>
+      <ul>
+        
+          <li class="github"><a href="http://github.com/bitmask93" target="_blank"><i class="fa fa-github"></i></a></li>
+        
+        
+          <li class="linkedin"><a href="https://in.linkedin.com/in/jithin-j-a5b662170" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        
+        
+          <li class="email"><a href="mailto:jithinjayan1993@gmail.com"><i class="fa fa-envelope-o"></i></a></li>
+        
+      </ul>
+    </section> <!-- End Section Contact -->
+    <div class="copyright">
+      <p>2020 &copy; Jithin J</p>
+    </div>
+  </footer> <!-- End Footer -->
+</aside> <!-- End Sidebar -->
+<div class="content-box clearfix">
+  <article class="article-page">
+  <div class="page-content">
+    
+    
+    <div class="wrap-content">
+      <header class="header-page">
+        <h1 class="page-title">Is ReLU Dead?</h1>
+        <div class="page-date"><span>2019, Oct 26&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+      </header>
+      <h3>In this Article, I will discuss the problem of dying Relu and how to identify them using Tensorboard</h3>
+
+<p><img src="https://cdn-images-1.medium.com/max/7000/0*hXpM6p8OmBebqzbY" alt="Photo by [Marius Masalar](https://unsplash.com/@marius?utm_source=medium&amp;utm_medium=referral) on [Unsplash](https://unsplash.com?utm_source=medium&amp;utm_medium=referral)" /><em>Photo by <a href="https://unsplash.com/@marius?utm_source=medium&amp;utm_medium=referral">Marius Masalar</a> on <a href="https://unsplash.com?utm_source=medium&amp;utm_medium=referral">Unsplash</a></em></p>
+
+<p>This article is about identifying dead ReLU problem using <a href="https://www.tensorflow.org/tensorboard/get_started">TensorBoard</a> which is a visualization toolkit for Machine Learning experiments.</p>
+
+<h2 id="what-is-relu">What is ReLU?</h2>
+
+<p><a href="https://machinelearningmastery.com/rectified-linear-activation-function-for-deep-learning-neural-networks/">ReLU</a> stands for Rectified Linear Units. ReLU is used mainly in Artificial Neural Networks as an activation function. By default, ReLU is the most preferred activation function. The main reason for that is ReLU doesn’t suffer from <a href="https://towardsdatascience.com/the-vanishing-gradient-problem-69bf08b15484">Vanishing gradient </a>problem. Mathematically ReLU can be expressed as:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595042671/Is-Relu-Dead/1_P9gs7YQq81D6DLCWQf9NSQ_ozsikf.gif" /></div>
+
+<p>Another way to express this is as follows :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595042757/Is-Relu-Dead/1_Cj2sgSi8LWJmsUBwTiMzMw_ktrv1q.gif" /></div>
+
+<p>This function looks visually as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595042828/Is-Relu-Dead/1_aIgTWE1223EGTqmi8lYBlA_tpj2gg.png" /></div>
+
+<div style="text-align:center"><a href="https://sebastianraschka.com/faq/docs/relu-derivative.html#why-is-the-relu-function-not-differentiable-at-x-0">Source</a>
+</div>
+
+<p>Please note that the function is not linear. The output of ReLU is non-linear.</p>
+
+<p>The derivative of ReLU is :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043000/Is-Relu-Dead/1_dn0t66_dPR5SOFYT29eufQ_plxejm.gif" /></div>
+
+<p>Derivative of ReLU is undefined at x=0.</p>
+
+<h2 id="what-is-dying-relu-problem">What is Dying ReLU problem?</h2>
+
+<p>The main advantage of ReLU is that it outputs 0 and 1 thus solves the problem of Vanishing Gradient(because we don’t have to multiply extremely small values during <a href="https://en.wikipedia.org/wiki/Backpropagation">Backpropagation</a>). However, it has it’s own downside too. Because it outputs 0 for every negative value, a ReLU neuron might get stuck in the negative side and always output 0, and it is unlikely for it to recover. This is called as the dying ReLU problem. This is a serious problem because if a neuron is dead, then it basically learns nothing. Because of this problem, there might be the case of a large part of the network doing nothing.</p>
+
+<h2 id="detect-dying-relu-using-tensorboard">Detect Dying ReLU using TensorBoard</h2>
+
+<p>Create a random sample using the following :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043066/Is-Relu-Dead/1_kwwKd2OCF83jZ7P1RdC-Og_xmfd7m.png" /></div>
+
+<p>Here x is an array of size 200k x 4 with values sampled uniformly in the range (-1,0). The array is highly negative one, the kind of input that relu doesn’t like. Then split the data into train and test set with 70% of data for train and 30% for test.</p>
+
+<p>Use a simple one layer Network with relu activation function. Initialize the initial weights randomly and initial bias as zero.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043091/Is-Relu-Dead/1_WaqdjmpxesCZp9T9vfGoyQ_tnz8jb.png" /></div>
+
+<p>Now initialize TensorBoard variable. We need the gradients at each epoch, so initialize the “write_grads” = True</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043117/Is-Relu-Dead/1_nSOzFJ7STUCCe9b8DFs1Xw_rrtlci.png" /></div>
+
+<p>Now finally fit the model and in the callbacks parameter use TensorBoard variable.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043144/Is-Relu-Dead/1_salOT_T8e67b9OJ7Q89FNQ_opthin.png" /></div>
+
+<p>Plot the training and Validation loss.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043171/Is-Relu-Dead/1_VGkxXA27mrcgdCMJ6RT9ow_rq8qqm.png" /></div>
+
+<div style="text-align:center">Plot of Validation Loss for all the epochs</div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043201/Is-Relu-Dead/1_7_VRjHkeSMDoUqbzrP9raw_iv2zc5.png" /></div>
+
+<div style="text-align:center">Plot of Training Loss for all the epochs</div>
+
+<p>From the above two plots it’s clear that the model’s loss hasn’t improved which means that the model has stopped learning. Now use TensorBoard to visualise the gradients and output of the dense layer.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043229/Is-Relu-Dead/1_SOARSzrlcM27DfS4JaC7Lg_n7yzek.png" /></div>
+
+<div style="text-align:center">Dense layer Output</div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043252/Is-Relu-Dead/1_9Dw9GtEn4dp3BekLun3gIA_kkkhhe.png" /></div>
+
+<div style="text-align:center">Dense layer Gradients</div>
+
+<p>From the above two plots, it can be observed that the dense layer gradients are zero for all the epochs, and the output is also zero for the 25 epochs. From the above gradient plot, it can be seen that, once the gradient goes to zero, the model struggles to recover from this situation and is completely dead now, which can be seen from the loss graph too, as the loss doesn’t change over time which indicates that the model’s learning has stopped or model is learning nothing.</p>
+
+<p><strong>Add More Layers</strong></p>
+
+<p>I’ll now use a three hidden layer network with the same ReLU kernel and see if this problem can be solved. I’ll use the following network :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043286/Is-Relu-Dead/1_bjtVXRYKw8dwkvtB1p1IJg_x6bwri_hmlvdl.png" /></div>
+
+<p>This is a three layer network with activations for all the layers set to ReLU.</p>
+
+<p>Now observe the TensorBoard Gradients for all these layers:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043316/Is-Relu-Dead/1_vNC2sT0JqujsMD2Nw2FybQ_uvbgrt_rpnzog.png" /></div>
+
+<div style="text-align:center">Dense_3 Gradients</div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043346/Is-Relu-Dead/1_M93Wj9bKx65Ny09S12alsg_vc4cug_xzjtw6.png" /></div>
+<div style="text-align:center">Dense_2 Gradients</div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043375/Is-Relu-Dead/1_oCKuSsiN1wZ5yBG_iOPNTQ_hcf6pr_xagrlm.png" /></div>
+<div style="text-align:center">Dense_1 Gradients</div>
+
+<p>From the three plots, it can be seen that Adding more layers doesn’t solve the issue of dead ReLU as can be seen from the above plots that the gradients are still zero for all the layers and they get propagated to all the other layers in the model and hence affecting the model’s performance.</p>
+
+<h2 id="solution">Solution?</h2>
+
+<p>1.<strong>Does increasing data size help?</strong></p>
+
+<p>A big NO!!. If the new data has the same distribution like the ones that are already present, then there is no use in including them in the training set. However, collecting a new dataset for the same problem may be considered as an option.</p>
+
+<p>2.<strong>Does adding Dropouts help?</strong></p>
+
+<p>Dropouts have nothing to do with the output of ReLU, so adding dropout or changing dropouts have little effect on dead activations.</p>
+
+<p>3.<strong>Does adding more layers help?</strong></p>
+
+<p>No, it doesn’t help to solve dying ReLU problem, which is clear from above section.</p>
+
+<p>4.<strong>Does increasing the epochs help?</strong></p>
+
+<p>No, it doesn’t help too because after each epoch, the weights get updated, however, due to the dead neurons, the gradients will be zero as a result the weights will never get updated, it remains same and calculating the gradients again using the same weight will result in 0, hence this doesn’t have any impact on dead ReLU.</p>
+
+<p>5.<strong>Does changing the weight initialization help?</strong></p>
+
+<p>For answering this question, let’s try with different weight initializers and plot their gradients and outputs. The following it the plot of the gradients for dense layer using relu activation for the weight initializers: he_normal, he_uniform, lecun_normal and random_uniform.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043414/Is-Relu-Dead/1_4xu3nbrIUniFRyswTDONMA_hctg32_skrliz.png" /></div>
+<div style="text-align:center">he_normal</div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043448/Is-Relu-Dead/1_OJJpPn9C2ujR_Vb8DETzsA_bgelxn_wld22a.png" /></div>
+<div style="text-align:center">he_uniform</div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043484/Is-Relu-Dead/1_THR5jL3p4isDiiga-4wmEw_a1wjzu.png" /></div>
+<div style="text-align:center">lecun_uniform</div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043523/Is-Relu-Dead/1_CuXyydyKTY-5sXZHHeBdyg_mswnvj.png" /></div>
+<div style="text-align:center">random_uniform</div>
+
+<p>From the above plots it can be observed that weight initialization has no much effect. From the plots of he_normal, he_uniform and lecun_normal, it could be observed that there is slight improvement in the initial stage but as the epochs increased, the derivatives got pulled towards zero.</p>
+
+<p>Since the input is highly negative, will initialize the weights also to negative values using:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043557/Is-Relu-Dead/1_Dy3RM5eBMrT3QgzhF7qeLw_zkji1j.png" /></div>
+
+<p>Here the weights are assigned values uniformly random between -1 and 0, which is the same distribution as that of the input and the plot of gradients and output is given below:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043596/Is-Relu-Dead/1_TkSj2ZOwVAmDtQxlpj58gQ_jbhg3v.png" /></div>
+<div style="text-align:center">dense_1 Output</div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043631/Is-Relu-Dead/1_eZMnVB8l_xNab6rW7yMA2A_jmgqoy.png" /></div>
+<div style="text-align:center">dense_1 gradients</div>
+
+<p>The same can be observed here also, as the epochs increased, the gradients became zero and the output also got pulled towards zero. So changing the initial weights could be considered as an option while dealing with Dead ReLU, however care must be taken to ensure that the model doesn’t run for too many epochs as it will further lead to the issue of ReLU dying. Infact, changing the initial weights don’t have much impact anyway which is clear from the above plots.</p>
+
+<p>6.<strong>Does changing activations help?</strong></p>
+
+<p>This may help. So what are the alternatives to ReLU? We can always use tanh and Sigmoid activations. Using a modified version of ReLU called Leaky ReLU, can also help get around the problem. However, in the particular example created for this experiment, all the mentioned activations fail because they suffer from Vanishing Gradients. When we consider the tradeoff between Vanishing gradients and Dying ReLU, it’s always better to have something than nothing. In Vanishing gradients, there is some learning, but in the case of dead ReLU there is no learning, the learning is halted.</p>
+
+<p>An improved version of Leaky ReLU called SELU(Scaled Exponential Linear Units) comes to the rescue. SELU activation self normalizes the Neural Networks, which means the network will have a mean of 0 and variance of 1 for its weights and bias after normalization. The main advantage of SELU is that it doesn’t suffer from Vanishing Gradients and Exploding gradients and also does not lead to dead activations. For more on SELU, refer to this <a href="https://arxiv.org/pdf/1706.02515.pdf">paper</a>. Note: SELU must be used with <strong><em>lecun_normal</em></strong> initialization and <strong><em>AlphaDropout</em></strong> as dropout. For the above dataset, use the following network with SELU activation :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043680/Is-Relu-Dead/1_GrzosZRxip1BmCk_2s668g_irc4pf.png" /></div>
+
+<p>Now Plotting the Gradients and the Output of the Dense Layer :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043720/Is-Relu-Dead/1_eXsCUjn0UVJbnGV1EXvFbg_m3dcee.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595043759/Is-Relu-Dead/1_XRul9CRGOtFLAcAdpmgYug_ajry45.png" /></div>
+
+<p>From the plot of gradients, it can be observed that the gradients have improved, the gradients are being pulled away from zero. And from the plot of outputs, it can be seen that the output of the dense layer with SELU activation is small but not zero like the above case. So even for this worst case, SELU does a good job than ReLU.</p>
+
+<h2 id="conclusion">Conclusion:</h2>
+
+<p>It is always a good practice to monitor the loss and gradients while working with Deep Neural Networks. This could help identify most of the issues related to training a Deep Learning model. There is no point in coding deep networks if you don’t know how to identify problems and debug them. This article is just a needle in a haystack. There are more problems associated with training Deep Neural Networks. Everyone who works with Deep Learning and Artificial Neural Networks would have faced this problem once in a while. If proper care not taken, then wasting hours retraining the model by changing the model’s parameters is useless. Since ReLU is the most preferred Activation function for most of the Deep Learning problems, care should be taken to avoid this problem. Thanks to TensorBoard, it’s now possible to identify this issue easily.</p>
+
+      <div class="page-footer">
+        <div class="page-share">
+          <a href="https://twitter.com/intent/tweet?text=Is ReLU Dead?&url=http://localhost:4000/Is-ReLU-Dead/" title="Share on Twitter" rel="nofollow" target="_blank">Twitter</a>
+          <a href="https://facebook.com/sharer.php?u=http://localhost:4000/Is-ReLU-Dead/" title="Share on Facebook" rel="nofollow" target="_blank">Facebook</a>
+          <a href="https://plus.google.com/share?url=http://localhost:4000/Is-ReLU-Dead/" title="Share on Google+" rel="nofollow" target="_blank">Google+</a>
+        </div>
+        <div class="page-tag">
+          
+            <a href="/ml-blog/tags#Machine Learning" class="tag">&#35; Machine Learning</a>
+          
+            <a href="/ml-blog/tags#Deep Learning" class="tag">&#35; Deep Learning</a>
+          
+        </div>
+      </div>
+      <section class="comment-area">
+  <div class="comment-wrapper">
+    
+    <div id="disqus_thread" class="article-comments"></div>
+    <script>
+      (function() {
+          var d = document, s = d.createElement('script');
+          //var disqus_shortname = '';
+          s.src = '//jithin-1.disqus.com/embed.js';
+          //s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+  </div>
+</section> <!-- End Comment Area -->
+
+    </div> <!-- End Wrap Content -->
+  </div> <!-- End Page Content -->
+</article> <!-- End Article Page -->
+
+</div>
+
+  </div>
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', '', 'auto');
+  ga('send', 'pageview');
+</script> <!-- End Analytics -->
+
+</body>
+</html>

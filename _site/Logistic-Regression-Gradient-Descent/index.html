@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Logistic Regression & Gradient Descent - Machine Learning Blogs</title>
+
+  <!-- Edit site and author settings in `_config.yml` to make the social details your own -->
+
+    <meta content="Machine Learning Blogs" property="og:site_name">
+  
+    <meta content="Logistic Regression & Gradient Descent" property="og:title">
+  
+  
+    <meta content="article" property="og:type">
+  
+  
+    <meta content="This is Part 2 of my blogs on Linear Models. In Part 1, I have discussed about Linear Regression as well as Gradient Descent." property="og:description">
+  
+  
+    <meta content="http://localhost:4000/Logistic-Regression-Gradient-Descent/" property="og:url">
+  
+  
+    <meta content="2020-06-02T16:02:20+05:30" property="article:published_time">
+    <meta content="http://localhost:4000/about/" property="article:author">
+  
+  
+    <meta content="http://localhost:4000/ml-blog/assets/img/david-freeman.jpg" property="og:image">
+  
+  
+    
+  
+  
+    
+    <meta content="Data Science" property="article:tag">
+    
+    <meta content="Machine Learning" property="article:tag">
+    
+    <meta content="Math" property="article:tag">
+    
+  
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@">
+    <meta name="twitter:creator" content="@">
+  
+    <meta name="twitter:title" content="Logistic Regression & Gradient Descent">
+  
+  
+    <meta name="twitter:url" content="http://localhost:4000/Logistic-Regression-Gradient-Descent/">
+  
+  
+    <meta name="twitter:description" content="This is Part 2 of my blogs on Linear Models. In Part 1, I have discussed about Linear Regression as well as Gradient Descent.">
+  
+  
+    <meta name="twitter:image:src" content="http://localhost:4000/ml-blog/assets/img/david-freeman.jpg">
+  
+
+	<meta name="description" content="This is Part 2 of my blogs on Linear Models. In Part 1, I have discussed about Linear Regression as well as Gradient Descent.">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta property="og:image" content="">
+	<link rel="shortcut icon" href="/ml-blog/assets/img/favicon/favicon.ico" type="image/x-icon">
+	<link rel="apple-touch-icon" href="/ml-blog/assets/img/favicon/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/ml-blog/assets/img/favicon/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/ml-blog/assets/img/favicon/apple-touch-icon-144x144.png">
+	<!-- Chrome, Firefox OS and Opera -->
+	<meta name="theme-color" content="#263959">
+	<!-- Windows Phone -->
+	<meta name="msapplication-navbutton-color" content="#263959">
+	<!-- iOS Safari -->
+	<meta name="apple-mobile-web-app-status-bar-style" content="#263959">
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=PT+Serif:400,700|Lato:300,400,700&display=swap" rel="stylesheet">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="/ml-blog/assets/fonts/font-awesome/css/font-awesome.min.css">
+	<!-- Styles -->
+	<link rel="stylesheet" href="/ml-blog/assets/css/main.css">
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <aside class="sidebar">
+  <header>
+    <div class="about">
+      <div class="cover-author-image">
+        <a href="/ml-blog/"><img src="/ml-blog/assets/img/david-freeman.jpg" alt="Jithin J"></a>
+      </div>
+      <div class="author-name">Jithin J</div>
+      <p>Machine Learning Engineer. Interested in Machine Learning and Deep Learning.</p>
+    </div>
+  </header> <!-- End Header -->
+  <footer>
+    <section class="contact">
+      <h3 class="contact-title">Contact me</h3>
+      <ul>
+        
+          <li class="github"><a href="http://github.com/bitmask93" target="_blank"><i class="fa fa-github"></i></a></li>
+        
+        
+          <li class="linkedin"><a href="https://in.linkedin.com/in/jithin-j-a5b662170" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        
+        
+          <li class="email"><a href="mailto:jithinjayan1993@gmail.com"><i class="fa fa-envelope-o"></i></a></li>
+        
+      </ul>
+    </section> <!-- End Section Contact -->
+    <div class="copyright">
+      <p>2020 &copy; Jithin J</p>
+    </div>
+  </footer> <!-- End Footer -->
+</aside> <!-- End Sidebar -->
+<div class="content-box clearfix">
+  <article class="article-page">
+  <div class="page-content">
+    
+    
+    <div class="wrap-content">
+      <header class="header-page">
+        <h1 class="page-title">Logistic Regression & Gradient Descent</h1>
+        <div class="page-date"><span>2020, Jun 02&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+      </header>
+      <h3><p>This is Part 2 of my blogs on Linear Models. In Part 1, I have discussed about Linear Regression as well as Gradient Descent. For Part 1 of my blog pleas click <a href="https://bitmask93.github.io/ml-blog/Linear-Regression&amp;Gradient-Descent/">here</a></p></h3>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595130682/log-lr-gd/0_kzgjdfrlF1kVZr0J_gdpz7k.jpg" /></div>
+
+<div style="text-align:center"><p>Photo by <a href="https://unsplash.com/@dizzyd718?utm_source=medium&amp;utm_medium=referral">Drew Graham</a> on <a href="https://unsplash.com?utm_source=medium&amp;utm_medium=referral">Unsplash</a></p>
+</div>
+
+<h4 id="introduction">Introduction :</h4>
+
+<p>Logistic Regression is also called as Logit Regression is used to estimate the probability that an instance belongs to a particular class(eg: the probability that it rains today?). If the estimated probability is greater than 50%, then the model predicts that the instance belongs to that class(positive class labelled “1”) or else it predicts the probability it does not belong to that class(ie the probability it belongs to negative class labelled “0”). Just like Linear Regression, a Logistic regression also computes a weighted sum of input features(plus a bias), but instead of outputting the result directly like Linear regression model does, it outputs the Logistic of this result :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595131106/log-lr-gd/1_0m0GprbB_qV2nekffFYUSA_clevc9.gif" /></div>
+
+<p>The logistic also called the <strong><em>logit</em></strong>, noted as <strong><em>σ(.)</em></strong> is a sigmoid function which takes a real input and outputs a value between 0 and 1.</p>
+
+<p>A graph of the logistic function on the <em>t</em>-interval (−6,6) is given below:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595131185/log-lr-gd/1_5IxgCMTQlym0Q9zk1PtmcQ_etnqtn.png" /></div>
+
+<div style="text-align:center"><p>Source : <a href="https://en.wikipedia.org/wiki/Logistic_function#/media/File:Logistic-curve.svg">Wikipedia</a></p>
+</div>
+
+<p>Once the Logistic Regression model has estimated the probability <strong><em>p̂</em></strong> , the model can make predictions using :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595131326/log-lr-gd/1_bdFP-9ZmjC7kJXxLhtn_tQ_cuqvyk.gif" /></div>
+
+<p>σ(t)&lt;0.5 when t&lt;0 and σ(t)≥0.5 when t≥0 , ie Logistic Regression predicts 1 when :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595131352/log-lr-gd/1_Y8tmLpx3Fi5EaYBnt1HPlA_ule5lx.gif" /></div>
+
+<p>And predicts 0 when it is negative.</p>
+
+<p><strong>Loss Function :</strong></p>
+
+<p>The objective of training is to set the parameter vector <strong><em>w</em></strong> so that the model predicts high probability for positive class(y=1) and low probabilities for negative instances(y=0). For a single training instance <strong><em>x</em></strong>, the loss function can be given as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595131391/log-lr-gd/1_9ZlH9EqjbycjmtmkE8w5qg_rnbdnk.gif" /></div>
+
+<p><strong><em>−log(t)</em></strong> grows very large when <strong><em>t</em></strong> approaches 0, so the cost will be large if the model estimates a probability close to 0 for a positive instance and it will also be very large if the model estimates a probability close to 1 for a negative instance.</p>
+
+<p><strong><em>−log(t)</em></strong> is close to 0 when <strong><em>t</em></strong> is close to 1, so the cost will be close to 0 if estimated probability is close to 0 for a negative instance or close to 1 for a positive instance, which is exactly what we need.</p>
+
+<p>The loss function over the whole training set is simply the average loss over all training instances:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595131428/log-lr-gd/1_zKrjo8cHg41roHErVwWPog_rkcrer.gif" /></div>
+
+<p>Unlike the Linear Regression, there is no closed form/normal equation to find the value of <strong><em>w</em></strong> that minimizes the loss function. But the function is convex one, so Gradient Descent or any other optimization algorithm is guaranteed to find the global minimum. You can read about Gradient Descent in my blog on <a href="https://bitmask93.github.io/ml-blog/Linear-Regression&amp;Gradient-Descent/">Linear Regression and Gradient Descent</a>.</p>
+
+<p>The partial derivative of the loss function with respect to the <strong><em>jth</em></strong> model parameter <strong><em>wj</em></strong> is given by:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595131501/log-lr-gd/1_a9BIt0Bh0SVDukJO-_EdQA_ipgp0o.gif" /></div>
+
+<p>For each instance it computes the prediction error and multiplies it by the <strong><em>jth</em></strong> feature value and then it computes the average over all training instances. Once we get the gradient vector containing all the partial derivatives, we can use it in the GD/SGD/mini-batch SGD.</p>
+
+<p><strong>Softmax Regression :</strong></p>
+
+<p>Logistic Regression can be generalized to support multiple classes directly without having to train and combine multiple binary classifiers. This is called as <strong>Softmax Regression</strong> or <strong>Multinomial Logistic Regression</strong>.</p>
+
+<p>When given an instance <strong><em>x</em></strong>, the Softmax Regression model first computes a score(<strong><em>z</em></strong>) for each class <strong><em>k</em></strong>, then estimates the probability of each class by applying a <em>softmax function</em>.</p>
+
+<p>The equation to calculate the softmax score for class <strong><em>k</em></strong> is given by:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595131540/log-lr-gd/1_8KvJUInkedTdI9Q9gidYhg_i6o7ey.gif" /></div>
+
+<p>Each class has a parameter vector w. All these are typically stored as rows in a parameter matrix <strong><em>W.</em></strong> After computing the score for every class for the instance <strong><em>x</em></strong>, we can estimate the probability that the instance belong to class <strong><em>k</em></strong> by running the scores through the <em>softmax function</em>. Which is given below as:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595131582/log-lr-gd/1_rtqbrBKS-LNYm17_X0kpCQ_ltzzaf.gif" /></div>
+
+<p>The softmax function computes the exponential of every score and then normalizes them by dividing by the sum of all the exponents. <strong><em>K</em></strong> is the total number of classes. z(<strong><em>x</em></strong>) is a vector containing the scores of each class for the instance <strong><em>x. σ(z(x))k</em></strong> is the estimated probability that the instance <strong><em>x</em></strong> belongs to the class <strong><em>k</em></strong> given the scores of each class for that instance. Like Logistic Regression classifier, the Softmax Regression classifier predicts the class with the highest estimated probability(which is simply the class with the highest score):</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595131624/log-lr-gd/1_iyUDFcP5Oy66Vo1Uel9akA_alijzb.gif" /></div>
+
+<p>The Softmax regression only predicts one class at a time(it is multiclass not multioutput), so it should only be used with mutually exclusive classes such as different types of plants. You cannot use it to recognize multiple people in one picture. The objective is to have a model that estimates high probability for the target class and low probability for the other class. So for this we need to minimize the cross entropy loss which penalizes the model when it estimates a low probability for a target class.</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595131661/log-lr-gd/1_RG5SNTSS51UG-BzOmP8jYQ_l2fu7o.gif" /></div>
+
+<p><strong><em>y</em></strong> is equal to 1, if the target class for the <strong><em>ith</em></strong> instance is <strong><em>k</em></strong>; otherwise it is equal to 0. When there is two classes <strong><em>(K=2)</em></strong>, the loss function is equivalent to the Logistic Regression Loss function. Cross entropy is used to measure how well a set of estimated class probabilities match the target class. For class <strong><em>k</em></strong>, the gradient vector for the cross entropy loss is given by :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595131702/log-lr-gd/1_4i2XlqxMUTVP02MHAjh36A_mqhwwe.gif" /></div>
+
+<p>Now that we can compute the gradient vector for every class, we can then use Gradient Descent or any other Optimization algorithm to find the parameter matrix <strong><em>W</em></strong> that minimizes the loss function.</p>
+
+<h4 id="regularization">Regularization:</h4>
+
+<p>Just like Linear Regression, Logistic Regression also supports both L1 as well as L2 Regression. The L2 regularized Logistic regression looks like the following:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595131741/log-lr-gd/1_lmsvQPkP5Dg-5EkrT8FUQQ_byumz3.gif" /></div>
+
+<p>Where <strong><em>L(w)</em></strong> is the logistic loss and the hyperparameter <strong><em>α</em></strong> controls how much we want to regularize the models. In the above equation if we change the loss function to Mean Square Error(MSE), then we get Ridge Regression.</p>
+
+<p>Similarly the L1 Regularized Logistic Regression looks like the following:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595131788/log-lr-gd/1_qwuN5WNvG64DyDw9XDPKcQ_lqlme1.gif" /></div>
+
+<p>Here too if we replace the Loss function to MSE, we get Lasso Regression.</p>
+
+<p><strong>Logistic regression Assumptions :</strong></p>
+
+<ul>
+  <li>Binary logistic regression requires the dependent variable to be binary and Softmax regression requires the dependent variable to be ordinal.</li>
+  <li>Observations should be independent of each other. In other words, the observations should not come from repeated measurements or matched data.</li>
+  <li>Little or no multicollinearity among the independent variables. This means that the independent variables should not be too highly correlated with each other.</li>
+  <li>Logistic regression assumes linearity of independent variables and log odds. although this analysis does not require the dependent and independent variables to be related linearly, it requires that the independent variables are linearly related to the log odds.</li>
+  <li>Logistic regression typically requires a large sample size.</li>
+</ul>
+
+<p>Now let us implement Logistic Regression using mini-batch Gradient descent and it’s variations which I have discussed in my blog on Linear Regression, Refer <a href="https://bitmask93.github.io/ml-blog/Linear-Regression&amp;Gradient-Descent/">this</a>.</p>
+
+<p>Let’s create a random set of examples:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">X</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>  
+<span class="n">y</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="no">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="o">-</span><span class="mi">3</span> <span class="o">*</span> <span class="no">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># True Weights = [2,-3]  </span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">round</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">y</span><span class="p">)))</span></code></pre></figure>
+
+<p>Let’s plot this data:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595131838/log-lr-gd/1_ef5cEJ0_Nb-ZJaQPREsSqw_ujsycb.png" /></div>
+
+<div style="text-align:center">Image By Author</div>
+
+<p>You can clearly that the data is linearly separable because we created the dataset in such a way that y is a linear combination of x. This is just for a demo purpose, in real world the dataset will not be like this.</p>
+
+<p>Now let’s define a function a function that will return the probability scores:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">get_probs</span><span class="p">(</span><span class="no">X</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>  
+    <span class="n">prob</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="no">X</span><span class="p">,</span><span class="n">w</span><span class="p">))))</span>  
+    <span class="k">return</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span></code></pre></figure>
+
+<p>Now Let’s define the cross entropy Loss function:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">log_loss</span><span class="p">(</span><span class="no">X</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>  
+    <span class="n">a</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="n">get_probs</span><span class="p">(</span><span class="no">X</span><span class="p">,</span><span class="n">w</span><span class="p">))</span>  
+    <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">get_probs</span><span class="p">(</span><span class="no">X</span><span class="p">,</span><span class="n">w</span><span class="p">)))</span>  
+    <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  
+    <span class="k">return</span> <span class="n">loss</span></code></pre></figure>
+
+<p>Let’s define a function that computes the Gradients of the loss function:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>  
+    <span class="n">grad</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">dot</span><span class="p">((</span><span class="n">get_probs</span><span class="p">(</span><span class="no">X</span><span class="p">,</span><span class="n">w</span><span class="p">)</span><span class="o">-</span><span class="n">y</span><span class="p">),</span><span class="no">X</span><span class="p">)</span><span class="o">/</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  
+    <span class="k">return</span> <span class="n">grad</span></code></pre></figure>
+
+<p>Mini-batch SGD:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">])</span> <span class="c1">#Initial Weights  </span>
+<span class="n">eta</span><span class="o">=</span> <span class="mf">0.1</span> <span class="c1"># learning rate  </span>
+<span class="n">n_iter</span> <span class="o">=</span> <span class="mi">4000</span> <span class="c1"># Number of Iterations  </span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span> <span class="c1">#Batch size</span>
+
+<span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n_iter</span><span class="p">)</span> <span class="c1">#List to store the loss at each iteration</span>
+
+<span class="n">es</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1">#For early stopping</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>  
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">)</span><span class="c1"># Random indices  </span>
+    <span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">log_loss</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span>  
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">-</span> <span class="n">eta</span> <span class="o">*</span> <span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;</span><span class="n">es</span><span class="p">):</span> <span class="c1">#If loss less than es we break(Early stopping)  </span>
+        <span class="k">break</span></code></pre></figure>
+
+<p>Here I’am storing the loss at each iteration in a list, so that later it can be used to plot the loss. I haven’t incorporated that here but in the full implementation present in my Github, I have incorporated those.</p>
+
+<p>mini-batch SGD with Momentum:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">])</span> <span class="c1">#Initial Weights</span>
+
+<span class="n">eta</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1"># learning rate  </span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="c1"># momentum</span>
+
+<span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros_like</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>  <span class="c1">#This is the additional vector</span>
+
+<span class="n">es</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1">#For early stopping</span>
+
+<span class="n">n_iter</span> <span class="o">=</span> <span class="mi">4000</span> <span class="c1"># Number Of iterations  </span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span> <span class="c1">#Batch Size  </span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n_iter</span><span class="p">)</span> <span class="c1">#List to store Loss at each iteration</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>  
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">)</span> <span class="c1"># Random Indices  </span>
+    <span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">log_loss</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span>  
+    <span class="n">h</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">h</span> <span class="o">+</span> <span class="n">eta</span> <span class="o">*</span> <span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span> <span class="c1"># Update h  </span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">-</span><span class="n">h</span>  
+    
+    <span class="k">if</span><span class="p">(</span><span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;</span><span class="n">es</span><span class="p">):</span> <span class="c1">#If loss less than 'es' break(Early stopping)  </span>
+        <span class="k">break</span></code></pre></figure>
+
+<p>mini-batch SGD With Nestrov accelerated momentum:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">])</span> <span class="c1">#Initial Weights</span>
+
+<span class="n">eta</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1"># Learning rate  </span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="c1"># Momentum</span>
+
+<span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros_like</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>  <span class="c1">#This is the additional vector</span>
+
+<span class="n">es</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1">#For early stopping</span>
+
+<span class="n">n_iter</span> <span class="o">=</span> <span class="mi">4000</span> <span class="c1">#Number of Iterations  </span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span> <span class="c1">#Batch Size  </span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n_iter</span><span class="p">)</span> <span class="c1">#List to store Loss at each iteration</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>  
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">)</span>  
+    <span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">log_loss</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span>  
+    <span class="n">h</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">h</span> <span class="o">+</span> <span class="n">eta</span> <span class="o">*</span> <span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="o">-</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">h</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span>   
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">-</span><span class="n">h</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;</span><span class="n">es</span><span class="p">):</span> <span class="c1">#If loss less than 'es' break(Early stopping)  </span>
+        <span class="k">break</span></code></pre></figure>
+
+<p>RMSProp :</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">])</span> <span class="c1">#Initial Weights</span>
+
+<span class="n">eta</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1"># learning rate  </span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="c1"># momentum  </span>
+<span class="n">gt</span> <span class="o">=</span> <span class="no">None</span>  
+<span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-8</span>  
+<span class="n">es</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1">#For early stopping</span>
+
+<span class="n">n_iter</span> <span class="o">=</span> <span class="mi">4000</span> <span class="c1">#Number of Iterations  </span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span> <span class="c1">#Batch Size  </span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n_iter</span><span class="p">)</span> <span class="c1">#List to store Loss at each iteration</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>  
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">)</span> <span class="c1">#Random Indices  </span>
+    <span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">log_loss</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span>  
+      
+    <span class="n">gt</span> <span class="o">=</span> <span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>  
+    <span class="n">gt</span> <span class="o">=</span> <span class="n">alpha</span><span class="o">*</span><span class="n">gt</span> <span class="o">+</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span><span class="o">*</span><span class="n">gt</span>  
+      
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">-</span><span class="p">(</span><span class="n">eta</span><span class="o">*</span><span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">]))</span><span class="o">/</span><span class="n">np</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">gt</span><span class="o">+</span><span class="n">eps</span><span class="p">)</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;</span><span class="n">es</span><span class="p">):</span> <span class="c1">#If loss less than 'es' break(Early stopping)  </span>
+        <span class="k">break</span></code></pre></figure>
+
+<p>Adam :</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">])</span> <span class="c1">#Initial Weights</span>
+
+<span class="n">eta</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1"># learning rate  </span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="c1"># momentum  </span>
+<span class="n">gt</span> <span class="o">=</span> <span class="no">None</span>  
+<span class="n">vt</span> <span class="o">=</span> <span class="mi">0</span>  
+<span class="n">beta</span> <span class="o">=</span> <span class="mf">0.0005</span>
+
+<span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-8</span>  
+<span class="n">es</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1">#For early stopping</span>
+
+<span class="n">n_iter</span> <span class="o">=</span> <span class="mi">4000</span> <span class="c1">#Number of Iterations  </span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span> <span class="c1">#Batch Size  </span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n_iter</span><span class="p">)</span> <span class="c1">#List to store all the loss</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>  
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">(</span><span class="no">X</span><span class="p">.</span><span class="nf">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">)</span>  
+    <span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">log_loss</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span>  
+      
+    <span class="n">gt</span> <span class="o">=</span> <span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>  
+      
+    <span class="n">vt</span> <span class="o">=</span> <span class="p">(</span><span class="n">beta</span><span class="o">*</span><span class="n">vt</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">beta</span><span class="p">)</span><span class="o">*</span><span class="n">gt</span>   
+      
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">-</span><span class="p">(</span><span class="n">eta</span><span class="o">*</span><span class="n">get_grads</span><span class="p">(</span><span class="no">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">]))</span><span class="o">/</span><span class="n">np</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">vt</span><span class="p">)</span><span class="o">+</span><span class="n">eps</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">loss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;</span><span class="n">es</span><span class="p">):</span>  
+        <span class="k">break</span></code></pre></figure>
+
+<p>You can find the full implementation with plots in my Github account <a href="https://github.com/bitmask93/Linear_Models/blob/master/2%29Logistic_Regression.ipynb">here</a>. You can try with different values for each of these parameters and understand what changes these parameters have on the performance of the model. Here I have gone for only 2 features just for the simplicity.</p>
+
+<h3 id="references">References :</h3>
+
+<ul>
+  <li><a href="https://www.oreilly.com/library/view/hands-on-machine-learning/9781491962282/">https://www.oreilly.com/library/view/hands-on-machine-learning/9781491962282/</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Logistic_regression">https://en.wikipedia.org/wiki/Logistic_regression</a></li>
+</ul>
+
+      <div class="page-footer">
+        <div class="page-share">
+          <a href="https://twitter.com/intent/tweet?text=Logistic Regression & Gradient Descent&url=http://localhost:4000/Logistic-Regression-Gradient-Descent/" title="Share on Twitter" rel="nofollow" target="_blank">Twitter</a>
+          <a href="https://facebook.com/sharer.php?u=http://localhost:4000/Logistic-Regression-Gradient-Descent/" title="Share on Facebook" rel="nofollow" target="_blank">Facebook</a>
+          <a href="https://plus.google.com/share?url=http://localhost:4000/Logistic-Regression-Gradient-Descent/" title="Share on Google+" rel="nofollow" target="_blank">Google+</a>
+        </div>
+        <div class="page-tag">
+          
+            <a href="/ml-blog/tags#Data Science" class="tag">&#35; Data Science</a>
+          
+            <a href="/ml-blog/tags#Machine Learning" class="tag">&#35; Machine Learning</a>
+          
+            <a href="/ml-blog/tags#Math" class="tag">&#35; Math</a>
+          
+        </div>
+      </div>
+      <section class="comment-area">
+  <div class="comment-wrapper">
+    
+    <div id="disqus_thread" class="article-comments"></div>
+    <script>
+      (function() {
+          var d = document, s = d.createElement('script');
+          //var disqus_shortname = '';
+          s.src = '//jithin-1.disqus.com/embed.js';
+          //s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+  </div>
+</section> <!-- End Comment Area -->
+
+    </div> <!-- End Wrap Content -->
+  </div> <!-- End Page Content -->
+</article> <!-- End Article Page -->
+
+</div>
+
+  </div>
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', '', 'auto');
+  ga('send', 'pageview');
+</script> <!-- End Analytics -->
+
+</body>
+</html>

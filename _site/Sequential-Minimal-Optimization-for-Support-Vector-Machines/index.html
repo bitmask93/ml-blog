@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Sequential Minimal Optimization for Support Vector Machines - Machine Learning Blogs</title>
+
+  <!-- Edit site and author settings in `_config.yml` to make the social details your own -->
+
+    <meta content="Machine Learning Blogs" property="og:site_name">
+  
+    <meta content="Sequential Minimal Optimization for Support Vector Machines" property="og:title">
+  
+  
+    <meta content="article" property="og:type">
+  
+  
+    <meta content="You’ll find this post in your `_posts` directory. Go ahead and edit it and re-build the site to see your changes." property="og:description">
+  
+  
+    <meta content="http://localhost:4000/Sequential-Minimal-Optimization-for-Support-Vector-Machines/" property="og:url">
+  
+  
+    <meta content="2020-06-14T16:02:20+05:30" property="article:published_time">
+    <meta content="http://localhost:4000/about/" property="article:author">
+  
+  
+    <meta content="http://localhost:4000/ml-blog/assets/img/david-freeman.jpg" property="og:image">
+  
+  
+    
+  
+  
+    
+  
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@">
+    <meta name="twitter:creator" content="@">
+  
+    <meta name="twitter:title" content="Sequential Minimal Optimization for Support Vector Machines">
+  
+  
+    <meta name="twitter:url" content="http://localhost:4000/Sequential-Minimal-Optimization-for-Support-Vector-Machines/">
+  
+  
+    <meta name="twitter:description" content="You’ll find this post in your `_posts` directory. Go ahead and edit it and re-build the site to see your changes.">
+  
+  
+    <meta name="twitter:image:src" content="http://localhost:4000/ml-blog/assets/img/david-freeman.jpg">
+  
+
+	<meta name="description" content="You’ll find this post in your `_posts` directory. Go ahead and edit it and re-build the site to see your changes.">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta property="og:image" content="">
+	<link rel="shortcut icon" href="/ml-blog/assets/img/favicon/favicon.ico" type="image/x-icon">
+	<link rel="apple-touch-icon" href="/ml-blog/assets/img/favicon/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/ml-blog/assets/img/favicon/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/ml-blog/assets/img/favicon/apple-touch-icon-144x144.png">
+	<!-- Chrome, Firefox OS and Opera -->
+	<meta name="theme-color" content="#263959">
+	<!-- Windows Phone -->
+	<meta name="msapplication-navbutton-color" content="#263959">
+	<!-- iOS Safari -->
+	<meta name="apple-mobile-web-app-status-bar-style" content="#263959">
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=PT+Serif:400,700|Lato:300,400,700&display=swap" rel="stylesheet">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="/ml-blog/assets/fonts/font-awesome/css/font-awesome.min.css">
+	<!-- Styles -->
+	<link rel="stylesheet" href="/ml-blog/assets/css/main.css">
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <aside class="sidebar">
+  <header>
+    <div class="about">
+      <div class="cover-author-image">
+        <a href="/ml-blog/"><img src="/ml-blog/assets/img/david-freeman.jpg" alt="Jithin J"></a>
+      </div>
+      <div class="author-name">Jithin J</div>
+      <p>Machine Learning Engineer. Interested in Machine Learning and Deep Learning.</p>
+    </div>
+  </header> <!-- End Header -->
+  <footer>
+    <section class="contact">
+      <h3 class="contact-title">Contact me</h3>
+      <ul>
+        
+          <li class="github"><a href="http://github.com/bitmask93" target="_blank"><i class="fa fa-github"></i></a></li>
+        
+        
+          <li class="linkedin"><a href="https://in.linkedin.com/in/jithin-j-a5b662170" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        
+        
+          <li class="email"><a href="mailto:jithinjayan1993@gmail.com"><i class="fa fa-envelope-o"></i></a></li>
+        
+      </ul>
+    </section> <!-- End Section Contact -->
+    <div class="copyright">
+      <p>2020 &copy; Jithin J</p>
+    </div>
+  </footer> <!-- End Footer -->
+</aside> <!-- End Sidebar -->
+<div class="content-box clearfix">
+  <article class="article-page">
+  <div class="page-content">
+    
+    
+    <div class="wrap-content">
+      <header class="header-page">
+        <h1 class="page-title">Sequential Minimal Optimization for Support Vector Machines</h1>
+        <div class="page-date"><span>2020, Jun 14&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+      </header>
+      <h4 id="in-this-blog-i-will-discuss-about-the-sequential-minimal-optimizationsmo-which-is-an-optimization-technique-that-is-used-for-training-kernel-svms">In this blog, I will discuss about the Sequential Minimal Optimization(SMO) which is an Optimization technique that is used for training Kernel SVM’s</h4>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595153085/SMO/0_JeeVKBFsgeg5Lpef_mnt0fk.jpg" /></div>
+
+<div style="text-align:center"><p>Photo by <a href="https://unsplash.com/@ikukevk?utm_source=medium&amp;utm_medium=referral">Kevin Ku</a> on <a href="https://unsplash.com?utm_source=medium&amp;utm_medium=referral">Unsplash</a></p>
+</div>
+
+<p>In this blog, I will discuss the Sequential Minimal Optimization(SMO) which is an Optimization technique that is used for training Support Vector Machines(SVM). Before getting into the discussion on SMO, I will discuss some basic Mathematics required to understand the Algorithm. Here I will start with the discussion on Lagrange Duality, Dual Form of SVM and then solving the dual form using the SMO algorithm.</p>
+
+<h3 id="lagrange-duality">Lagrange Duality</h3>
+
+<p>Consider the following Primal Optimization Problem :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595153201/SMO/1_FcVnO7yOhpRX9t02o6edRw_lytwhd.gif" /></div>
+
+<p>To solve this, let us define the Lagrangian as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595153245/SMO/1_8Ob5SdiN94XbREkEg_TkSQ_vkqf4o.gif" /></div>
+
+<p>Here the <strong><em>αi</em></strong>’s and <strong><em>βi</em></strong>’s are the Lagrange Multipliers. Now let us define the primal Lagrangian function as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595153298/SMO/1_T0HFYpZvWW3-MBY1c9vifA_ysgskc.gif" /></div>
+
+<p>For any given <strong><em>w</em></strong>, if <strong><em>w</em></strong> violates any of the Primal constraints, then it can be shown that :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595153329/SMO/1_2M6gKZFiRkHMkwRuPzha-Q_qfrtcn.gif" /></div>
+
+<p>Now if the constraints are satisfied for a particular value of <strong><em>w</em></strong>, then <strong><em>p(w)=f(w)</em></strong>. This can be summarised as follows :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595153386/SMO/1_l8rat0Q9UGFjY5PgX_hBRg_htyur7.gif" /></div>
+
+<p>Now let’s consider the minimization problem :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595153425/SMO/1_Vz39OrZMWUErjIFMj65VBQ_r7cthy.gif" /></div>
+
+<p>We have already seen that <strong><em>p(w)</em></strong> takes the same value as the objective for all values of <strong><em>w</em></strong> that satisfies the primal constraints and <strong><em>∞</em></strong> otherwise. So we can clearly see from the minimization problem that the solutions to this problem is same as the original Primal Problem. Now let us define the optimal value of the objective to be :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595153461/SMO/1_x3DVlINk6qrd1st7ywrICw_zbsnoz.gif" /></div>
+
+<p>Now let us define the Dual Lagrangian function as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595153503/SMO/1_IT9FlhaZZvRb20_9nXFkWg_vvjfnb.gif" /></div>
+
+<p>Now we can pose the Dual Optimization problem as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595153542/SMO/1_gjBtN8-J1hWROtxDS_R2Rw_nxvsmu.gif" /></div>
+
+<p>Now let’s define the optimal value of the dual problem objective as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595153593/SMO/1_Z8PgEcVdcvkKHOFdSDHoYQ_gubhxw.gif" /></div>
+
+<p>Now it can be shown that :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595153633/SMO/1_mCGZVgSaO5lrFw9KXhUAbA_vwfca2.gif" /></div>
+
+<p>“Max-min” of a function will always be less than or equal to “Min-max”. Also under certain conditions, <strong><em>d∗=p∗</em></strong>. These conditions are :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595153667/SMO/1_IAkKc4LuDIpq8P5BwHnKDg_fil22u.png" /></div>
+
+<p>This means that we can solve the dual problem instead of the primal problem. So there must exist <strong><em>w∗</em></strong>, <strong><em>α∗</em></strong>, <strong><em>β∗</em></strong> so that <strong><em>w∗</em></strong> is the solution to the primal and <strong><em>α∗</em></strong> and <strong><em>β∗</em></strong> are the solutions to the Dual Problem and <strong><em>p∗=d∗</em></strong>. Here <strong><em>w∗</em></strong>, <strong><em>α∗</em></strong>, <strong><em>β∗</em></strong> satisfy the Karush-Kuhn-Tucker(KKT) constraints which are as follows :</p>
+
+<p><strong>Stationarity conditions :</strong></p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595153696/SMO/1_7_DEo1Dqmnitj6_vYEz87g_ic5sez.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595154545/SMO/1_L2te3X-qpcndyyg_5xU3KQ_hdgu4d.png" /></div>
+
+<p><strong>Complimentary slackness condition :</strong></p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595154585/SMO/1_l6yC-v8i4NMOvX5r79NIgQ_cqakdo.png" /></div>
+
+<p><strong>Primal feasibility condition :</strong></p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595155859/SMO/1_6qAPww1iz3MVccwRcnurzg_cs1jde.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595155894/SMO/1_07R5NYu-f-7ta00z2EHjDg_w1fxe2.png" /></div>
+
+<p><strong>Dual feasibility condition :</strong></p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595155932/SMO/1_LNITOL1Icwdg5TaURYwVKg_zt1hvr.png" /></div>
+
+<h4 id="optimal-margin-classifiers">Optimal Margin Classifiers :</h4>
+
+<p>The Primal Optimization problem for an Optimal margin Classifier is given as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595155964/SMO/1_0oXPJ2hgU4d_QO_ELgD6Kw_vkytk3.png" /></div>
+
+<p>Now let us construct the Lagrangian for the Optimization problem as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595156000/SMO/1_aVEtXCRlNLEMydwMg2Lf9g_dl5jb0.png" /></div>
+
+<p>To find the dual form of the problem, we need to first minimize <strong><em>L(w,b,α)</em></strong> wrt. <strong><em>b</em></strong> and <strong><em>w</em></strong>, this can be done by setting the derivatives of <strong><em>L</em></strong> wrt. <strong><em>w</em></strong> and <strong><em>b</em></strong> to zero. So we can write this as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595156032/SMO/1_DAEU3zVtnWWCaH97yw879g_jvc3rk.png" /></div>
+
+<p>For derivatives of <strong><em>L</em></strong> wrt. <strong><em>b</em></strong>, we get :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595156073/SMO/1_hHQoe64gL_Q_-ySkQ2Np1w_solcee.png" /></div>
+
+<p>Now we can write the Lagrangian as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595156117/SMO/1_Ku4PLKisZyEEYtUVufdzVg_qkufyq.png" /></div>
+
+<p>But we have already seen that the last term of the above equation is zero. So rewriting the equation, so we get :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595156164/SMO/1__xVo6bnReT3IVeRVczv7ug_bqndsu.png" /></div>
+
+<p>The above equation is obtained by minimizing <strong><em>L</em></strong> wrt. <strong><em>b</em></strong> and <strong><em>w</em></strong>. Now putting all this together with all the constraints, we obtain the following :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595156209/SMO/1_Y3FQE_bgHtLFpwtfRNK7Uw_rco1hi.png" /></div>
+
+<p>Now once we have found the optimal <strong><em>αi’s</em></strong> we can find optimal <strong><em>w</em></strong> using the following :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595156243/SMO/1_ZXXB_nNgmGBkxn0IdoRtoQ_lpdbtf.png" /></div>
+
+<p>Having found <strong><em>w∗</em></strong>, now we can find the intercept term (<strong><em>b</em></strong>) using the following :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595156296/SMO/1_QpXvdab_0eXfXbUWibdWnw_q6ilzh.png" /></div>
+
+<p>Now once we have fit the model’s parameters to the training set, we can get the predictions from the model for a new datapoint <strong><em>x</em></strong> using :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595156343/SMO/1_vTSdgGj7Wb1S3GL6uqlNeg_a7pmcn.png" /></div>
+
+<p>The model will output 1 when this is strictly greater than 0, we can also express this using the following :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595156393/SMO/1_tp_-3GLo_EBi4SdydJBwiQ_o6l4af.png" /></div>
+
+<h3 id="sequential-minimal-optimization">Sequential Minimal Optimization</h3>
+
+<p>Sequential Minimal optimization (SMO) is an iterative algorithm for solving the Quadratic Programming(QP.) problem that arises during the training of Support Vector Machines(SVM). SMO is very fast and can quickly solve the SVM QP without using any QP optimization steps at all. Consider a binary classification with a dataset <strong><em>(x1,y1),…..,(xn,yn)</em></strong> where <strong><em>xi</em></strong> is the input vector and <strong><em>yi∈{−1,+1}</em></strong> which is a binary label corresponding to each <strong><em>xi</em></strong>. An optimal margin SVM is found by solving a QP. problem that is expressed in the dual form as follows :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595156468/SMO/1_orXru39zbu4JjbJbW9ZeqQ_vnzlv9.png" /></div>
+
+<p>Here <strong><em>C</em></strong> is SVM hyperparameter that controls the tradeoff between maximum margin and loss and <strong><em>K(xi,xj)</em></strong> is the <strong>Kernel Function</strong>. <strong><em>αi</em></strong> is <strong>Lagrange Multipliers</strong>. SMO is an iterative algorithm and in each step, it chooses two Lagrange Multipliers to jointly optimize and then finds the optimal values for these multipliers and updates the SVM to reflect the new optimal values. The main advantage of SMO lies in the fact that solving for two Lagrange multipliers can be done analytically even though there are more optimization sub-problems that are being solved, each of these sub-problems can be solved fast and hence the overall QP problem is solved quickly. The algorithm can be summarised using the following:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Repeat till convergence :  
+{
+	1. Select some pair αi and αj  
+	2. Reoptimize W(α) wrt. αi and αj while holding all other αk’s fixed.
+}
+</code></pre></div></div>
+<p>There are two components to SMO: An analytical solution for solving for two Lagrange Multipliers and a heuristic for choosing which multipliers to optimize.</p>
+
+<h4 id="solving-for-two-lagrange-multipliers">Solving for two Lagrange Multipliers :</h4>
+
+<p>SMO first computes the constraints on the two multipliers and then solves for constrained minimum. Since there is a bounding constraint <strong><em>0≤αi≤C</em></strong> on the Lagrange multipliers, these Lagrange multipliers will lie within a box. The following causes the Lagrange multipliers to lie on the diagonal :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595160930/SMO/1_hiogcJw6aJ22MoVaZWu7WQ_eslylh.png" /></div>
+
+<p>If SMO optimized only one multiplier, it could not fulfill the above equality constraint at every step. Thus the Constrained minimum of the objective function must lie on a diagonal line segment. Therefore, one step of SMO must find an optimum of the objective function on a diagonal line segment. This can be seen from the following diagram :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595160976/SMO/1_BWWRI66as4Psu0_sNwzDNw_wizfad.png" /></div>
+
+<div style="text-align:center"><p><a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-98-14.pdf">Source</a></p></div>
+
+<p>Because there are only two multipliers, the constraints can be easily displayed in two dimensions as seen above. The algorithm first computes the second Lagrange multiplier <strong><em>α2</em></strong> and then computes the ends of the diagonal line segment in terms of <strong><em>α2</em></strong>.</p>
+
+<p>If <strong><em>y1≠y2</em></strong>, then the following bounds apply to <strong><em>α2</em></strong> :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595161335/SMO/1_5rTGKL7G3ROEVWqKjTlbOQ_fwm0fv.png" /></div>
+
+<p>If <strong><em>y1=y2</em></strong>, then the following bounds apply to <strong><em>α2</em></strong> :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595161381/SMO/1_QP-L3O-IT5dYXf3XX4Bd8w_rjkzih.png" /></div>
+
+<p>The second derivative of the Objective function along the diagonal is expressed as :</p>
+
+<p><img src="https://cdn-images-1.medium.com/max/800/1*XsehPyxFGZdHAokgZVWo0Q.png" alt="" /></p>
+
+<p>Under normal circumstances, <strong><em>η</em></strong> will be greater than zero and there will be a minimum along the direction of the linear equality constraint. In this case, SMO computes the minimum along the direction of the constraint :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595161418/SMO/1_qa1rcFboK-Z9849ubHhsZw_somq7t.png" /></div>
+
+<p>Where :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595161457/SMO/1_-CsJDbK5ETBlt0hDCX5ueg_gvaskh.png" /></div>
+
+<p><strong><em>μi</em></strong> is the output of the SVM for the <strong><em>i</em></strong>’th training example. The constrained minimum is found by clipping the unconstrained minimum to the ends of the line segment :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595161501/SMO/1_mPfGftqM0GUjYDf_Qo0qAQ_pfop2h.png" /></div>
+
+<p>The value of <strong><em>α1</em></strong> is computed from the new clipped <strong><em>α2</em></strong> using:</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595161539/SMO/1_7z0Bpi4V_hw5obu92QZ94g_d4djwi.png" /></div>
+
+<p>Under normal circumstances <strong><em>η&gt;0</em></strong>. A negative <strong><em>η</em></strong> occurs if the kernel <strong><em>K</em></strong> does not obey Mercer’s Conditions which states that for any Kernel(<strong><em>K</em></strong>), to be a valid kernel, then for any input vector <strong><em>x</em></strong>, the corresponding Kernel Matrix must be symmetric positive semi-definite. <strong><em>η=0</em></strong> when more than one training example has the same input vector <strong><em>x</em></strong>. SMO will work even when <strong><em>η</em></strong> is not positive, in which case the objective function(<strong><em>ψ</em></strong>) should be evaluated at each end of the line segment :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595161578/SMO/1_U3HUCrYkNVHtcnfH7qZCuQ_ejl02h.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595161616/SMO/1_hRJHHCWsEyrJGgSDvI3a5A_y5vwid.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595161654/SMO/1_GCi2cVEe35CMgMsJAgpcaA_s5eeyu.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595161699/SMO/1_8eNeQQRoRT-OHH4e7QwDcg_duxwpx.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595161740/SMO/1_NcmDkXdWTHeudL_XjTZUWQ_w0jm7v.png" /></div>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595161794/SMO/1_OIwbLbcb08Na6RYC0OWVyA_v489xb.png" /></div>
+
+<p>SMO will move the Lagrange multipliers to the point that has the lowest value of the Objective Function. If Objective function is the same at both ends and Kernel obeys Mercer’s conditions, then the joint minimization cannot make progress, in such situations we follow the Heuristic approach, which is given below.</p>
+
+<h4 id="heuristic-for-choosing-which-multipliers-to-optimize">Heuristic for choosing which multipliers to Optimize :</h4>
+
+<p>According to <strong>Osuna’s Theorum</strong>, a large QP. The problem can be broken down into a series of smaller QP sub-problems. A sequence of QP. subproblems that add at least one violator to the Karush-Kuhn-Tucker(KKT) conditions is guaranteed to converge. So SMO optimizes and alters two lagrange multipliers at each step and at least one of the Lagrange multipliers violates the KKT conditions before the next step, then each step will decrease the objective function and thus by the above theorem making sure that convergence does happen.</p>
+
+<p>There are two separate heuristics: one for choosing the first Lagrange multiplier and one for the second. The choice for the first heuristic forms the outer loop of SMO. The outer loop iterates over the entire training set, and determines if each example violates the KKT conditions and if it does, then it is eligible for optimization.</p>
+
+<p>After one pass through the entire dataset, the outer loop of SMO makes repeated passes over the non-bound examples(examples whose Lagrange Multipliers are neither 0 nor <strong><em>C</em></strong>) until all of the non-bound examples obey the KKT conditions within <strong><em>ϵ</em></strong>. Typically <strong><em>ϵ</em></strong> is chosen to be 10^(−3).</p>
+
+<p>As SMO progresses, the examples that are at the bounds are likely to stay at the bounds while the examples that are not at the bounds will move as other examples are optimized. And then finally SMO will scan the entire data set to search for any bound examples that have become KKT violated due to optimizing the non-bound subset.</p>
+
+<p>Once the first Lagrange multiplier is chosen, SMO chooses the second Lagrange multiplier to maximize the size of the step taken during the joint optimization. Evaluating the Kernel Function <strong><em>K</em></strong> is time consuming, so SMO approximates the step size by the absolute value of <strong>|E1−E2|</strong>.</p>
+
+<ul>
+  <li>If <strong><em>E1</em></strong> is positive, then SMO chooses an example with minimum error <strong><em>E2</em></strong>.</li>
+  <li>If <strong><em>E1</em></strong> is negative, SMO chooses an example with maximum error <strong><em>E2</em></strong>.</li>
+</ul>
+
+<p>If two training examples share an identical input vector(<strong><em>x</em></strong>), then a positive progress cannot be made because the objective function becomes semi-definite. In this case, SMO uses a hierarchy of second choice heuristics until it finds a pair of Lagrange multipliers that can make a positive progress. The hierarchy of second choice heuristics is as follows :</p>
+
+<ul>
+  <li>SMO starts iterating through the non-bound examples, searching for a second example that can make a positive progress.</li>
+  <li>If none of the non-bound examples makes a positive progress, then SMO starts iterating through the entire training set until an example is found that makes positive progress.</li>
+</ul>
+
+<p>Both the iteration through the non-bound examples and the iteration through entire training set are started at random locations so as to not bias SMO. In situations when none of the examples will make an adequate second example, then the first example is skipped and SMO continues with another chosen first example. However, this situation is very rare.</p>
+
+<h4 id="computing-the-threshold">Computing the threshold :</h4>
+
+<p>After optimizing <strong><em>αi</em></strong> and <strong><em>αj</em></strong>, we select the threshold <strong><em>b</em></strong> such that the KKT conditions are satisfied for the <em>ith</em> and <em>jth</em> examples. When the new <strong><em>α1</em></strong> is not at the bounds, then the output of SVM is forced to be <strong><em>y1</em></strong> when the input is <strong><em>x1</em></strong>, hence the following threshold(<strong><em>b1</em></strong>) is valid :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595161929/SMO/1__9JMphKPMwC021i3ClRdUQ_ys4voa.png" /></div>
+
+<p>When the new <strong><em>α2</em></strong> is not at the bounds, then the output of SVM is forced to be <strong><em>y2</em></strong> when the input is <strong><em>x2</em></strong>, hence the following threshold(<strong><em>b2</em></strong>) is valid :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595161969/SMO/1_VRJc7C6EIWQUxFRbip1qHA_lepxvv.png" /></div>
+
+<p>When both <strong><em>b1</em></strong> and <strong><em>b2</em></strong> are valid, they are equal. When both new Lagrange multipliers are at bound and if L is not equal to H, then all the thresholds between the interval <strong><em>b1</em></strong> and <strong><em>b2</em></strong> satisfy the KKT conditions. SMO chooses the threshold to be halfway in between <strong><em>b1</em></strong> and <strong><em>b2</em></strong>. The complete equation for <strong><em>b</em></strong> is given as :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595162004/SMO/1_Wf80-UjEzie9PQ4_y5xSnw_yt2fac.png" /></div>
+
+<p>Now to compute Linear SVM, only a single weight vector(<strong><em>w</em></strong>) need to be stored rather than all of the training examples that correspond to non-zero Lagrange multipliers. If the joint optimization succeeds, then the stored weight vector needs to be updated to reflect the new Lagrange multiplier values. The updation step is given by :</p>
+
+<div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595162060/SMO/1_YdVktYm7pqvM-tLpo_xhaA_vx387u.png" /></div>
+
+<p>The pseudocode for SMO is available <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-98-14.pdf">here</a>.</p>
+
+<h3 id="references"><strong>References :</strong></h3>
+
+<ul>
+  <li><a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-98-14.pdf">https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-98-14.pdf</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Sequential_minimal_optimization">https://en.wikipedia.org/wiki/Sequential_minimal_optimization</a></li>
+  <li><a href="http://pages.cs.wisc.edu/~dpage/cs760/SMOlecture.pdf">http://pages.cs.wisc.edu/~dpage/cs760/SMOlecture.pdf</a></li>
+  <li><a href="http://www.robots.ox.ac.uk/~az/lectures/ml/lect3.pdf">http://www.robots.ox.ac.uk/~az/lectures/ml/lect3.pdf</a></li>
+  <li><a href="http://www.gatsby.ucl.ac.uk/~gretton/coursefiles/Slides5A.pdf">http://www.gatsby.ucl.ac.uk/~gretton/coursefiles/Slides5A.pdf</a></li>
+  <li><a href="http://cs229.stanford.edu/materials/smo.pdf">http://cs229.stanford.edu/materials/smo.pdf</a></li>
+  <li><a href="http://cs229.stanford.edu/notes/cs229-notes3.pdf">http://cs229.stanford.edu/notes/cs229-notes3.pdf</a></li>
+</ul>
+
+      <div class="page-footer">
+        <div class="page-share">
+          <a href="https://twitter.com/intent/tweet?text=Sequential Minimal Optimization for Support Vector Machines&url=http://localhost:4000/Sequential-Minimal-Optimization-for-Support-Vector-Machines/" title="Share on Twitter" rel="nofollow" target="_blank">Twitter</a>
+          <a href="https://facebook.com/sharer.php?u=http://localhost:4000/Sequential-Minimal-Optimization-for-Support-Vector-Machines/" title="Share on Facebook" rel="nofollow" target="_blank">Facebook</a>
+          <a href="https://plus.google.com/share?url=http://localhost:4000/Sequential-Minimal-Optimization-for-Support-Vector-Machines/" title="Share on Google+" rel="nofollow" target="_blank">Google+</a>
+        </div>
+        <div class="page-tag">
+          
+        </div>
+      </div>
+      <section class="comment-area">
+  <div class="comment-wrapper">
+    
+    <div id="disqus_thread" class="article-comments"></div>
+    <script>
+      (function() {
+          var d = document, s = d.createElement('script');
+          //var disqus_shortname = '';
+          s.src = '//jithin-1.disqus.com/embed.js';
+          //s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+  </div>
+</section> <!-- End Comment Area -->
+
+    </div> <!-- End Wrap Content -->
+  </div> <!-- End Page Content -->
+</article> <!-- End Article Page -->
+
+</div>
+
+  </div>
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', '', 'auto');
+  ga('send', 'pageview');
+</script> <!-- End Analytics -->
+
+</body>
+</html>
