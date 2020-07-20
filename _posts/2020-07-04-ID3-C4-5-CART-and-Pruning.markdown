@@ -2,11 +2,11 @@
 layout: post
 title: ID3, C4.5, CART and Pruning
 date: 2020-07-04 13:32:20 +0300
-description: In this blog, I will discuss about some algorithms used while Training Decision Trees.
+description: In this post, I will discuss about some algorithms used while Training Decision Trees.
 tags: [Data Science, Machine Learning, Math]
 ---
 
-#### In this blog, I will discuss about some algorithms used while Training Decision Trees.
+#### In this post, I will discuss about some algorithms used while Training Decision Trees.
 
 <div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595213602/DT/0_9Pp_FKINCLcGiLE1_fojjny.jpg" /></div>
 
@@ -216,7 +216,7 @@ Under Null Hypothesis these probabilities are independent and so the product of 
 
 ### References
 
-The following contains links to the works which helped me while writing this blog. So this work is just a summary of all the below mentioned works. For further reading on all the above mentioned, please do have a look at the following :
+The following contains links to the works which helped me while writing this post. So this work is just a summary of all the below mentioned works. For further reading on all the above mentioned, please do have a look at the following :
 
 *   [https://link.springer.com/content/pdf/10.1007/BF00116251.pdf](https://link.springer.com/content/pdf/10.1007/BF00116251.pdf)
 *   [https://www.researchgate.net/publication/324941161\_A\_Survey\_on\_Decision\_Tree\_Algorithms\_of\_Classification\_in\_Data\_Mining](https://www.researchgate.net/publication/324941161_A_Survey_on_Decision_Tree_Algorithms_of_Classification_in_Data_Mining)

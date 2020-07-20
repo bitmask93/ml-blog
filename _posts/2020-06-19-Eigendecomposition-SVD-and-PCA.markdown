@@ -2,11 +2,11 @@
 layout: post
 title: Eigendecomposition, SVD and PCA
 date: 2020-06-19 13:32:20 +0300
-description: In this blog, I will discuss some basic linear algebra, Eigendecomposition, SVD and PCA.
+description: In this post, I will discuss some basic linear algebra, Eigendecomposition, SVD and PCA.
 tags: [Data Science, Machine Learning, Math]
 ---
 
-#### In this blog, I will discuss some basic linear algebra, Eigendecomposition, SVD and PCA.
+#### In this post, I will discuss some basic linear algebra, Eigendecomposition, SVD and PCA.
 
 
 ![Photo by [Markus Spiske](https://unsplash.com/@markusspiske?utm_source=medium&utm_medium=referral) on [Unsplash](https://unsplash.com?utm_source=medium&utm_medium=referral)](https://cdn-images-1.medium.com/max/2560/0*t199VnUb8tdFFVqs)*Photo by [Markus Spiske](https://unsplash.com/@markusspiske?utm_source=medium&utm_medium=referral) on [Unsplash](https://unsplash.com?utm_source=medium&utm_medium=referral)*

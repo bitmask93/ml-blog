@@ -2,19 +2,19 @@
 layout: post
 title: "Sequential Minimal Optimization for Support Vector Machines"
 date: 2020-06-14 13:32:20 +0300
-description: You’ll find this post in your `_posts` directory. Go ahead and edit it and re-build the site to see your changes. # Add post description (optional)
+description: In this post, I will discuss about the Sequential Minimal Optimization(SMO) which is an Optimization technique that is used for training Kernel SVM's
 img:  # Add image post (optional)
 ---
 
 
-#### In this blog, I will discuss about the Sequential Minimal Optimization(SMO) which is an Optimization technique that is used for training Kernel SVM's
+#### In this post, I will discuss about the Sequential Minimal Optimization(SMO) which is an Optimization technique that is used for training Kernel SVM's
 
 <div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595153085/SMO/0_JeeVKBFsgeg5Lpef_mnt0fk.jpg" /></div>
 
 <div style="text-align:center"><p>Photo by <a href="https://unsplash.com/@ikukevk?utm_source=medium&amp;utm_medium=referral">Kevin Ku</a> on <a href="https://unsplash.com?utm_source=medium&amp;utm_medium=referral">Unsplash</a></p>
 </div>
 
-In this blog, I will discuss the Sequential Minimal Optimization(SMO) which is an Optimization technique that is used for training Support Vector Machines(SVM). Before getting into the discussion on SMO, I will discuss some basic Mathematics required to understand the Algorithm. Here I will start with the discussion on Lagrange Duality, Dual Form of SVM and then solving the dual form using the SMO algorithm.
+In this post, I will discuss the Sequential Minimal Optimization(SMO) which is an Optimization technique that is used for training Support Vector Machines(SVM). Before getting into the discussion on SMO, I will discuss some basic Mathematics required to understand the Algorithm. Here I will start with the discussion on Lagrange Duality, Dual Form of SVM and then solving the dual form using the SMO algorithm.
 
 ### Lagrange Duality
 
