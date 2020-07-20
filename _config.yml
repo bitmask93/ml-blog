@@ -1,8 +1,6 @@
-title: Machine Learning Blogs
-description: > # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+title: Machine Learning Blog
+description: Blog on Various topics in Machine Learning and Deep Learning # this means to ignore newlines until "baseurl:"
+  
 permalink: ':title/'
 baseurl: "/ml-blog" # the subpath of your site, e.g. /blog
 url: "https://bitmask93.github.io" # the base hostname & protocol for your site, e.g. http://example.com
