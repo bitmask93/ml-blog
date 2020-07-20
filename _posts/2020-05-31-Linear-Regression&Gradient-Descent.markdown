@@ -5,7 +5,7 @@ date: 2020-05-31 13:32:20 +0300
 description: In this blog, I will discuss about Linear Regression and Gradient Descent along with their implementation in Python.
 tags: [Data Science, Machine Learning, Math]
 ---
-<h3>In this blog, I will discuss about Linear Regression and Gradient Descent along with their implementation in Python.</h3>
+<h3>In this Post, I will discuss about Linear Regression and Gradient Descent along with their implementation in Python.</h3>
 
 ![Photo by [Fatos Bytyqi](https://unsplash.com/@fatosi?utm_source=medium&utm_medium=referral) on [Unsplash](https://unsplash.com?utm_source=medium&utm_medium=referral)](https://cdn-images-1.medium.com/max/10368/0*O5R1cW3XdAn6KWW6)*Photo by [Fatos Bytyqi](https://unsplash.com/@fatosi?utm_source=medium&utm_medium=referral) on [Unsplash](https://unsplash.com?utm_source=medium&utm_medium=referral)*
 

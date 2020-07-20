@@ -2,11 +2,11 @@
 layout: post
 title: Logistic Regression & Gradient Descent
 date: 2020-06-02 13:32:20 +0300
-description: This is Part 2 of my blogs on Linear Models. In Part 1, I have discussed about Linear Regression as well as Gradient Descent.
+description: This is Part 2 of my post on Linear Models. In Part 1, I have discussed about Linear Regression as well as Gradient Descent.
 tags: [Data Science, Machine Learning, Math]
 ---
 
-<h3><p>This is Part 2 of my blogs on Linear Models. In Part 1, I have discussed about Linear Regression as well as Gradient Descent. For Part 1 of my blog pleas click <a href="https://bitmask93.github.io/ml-blog/Linear-Regression&Gradient-Descent/">here</a></p></h3>
+<h3><p>This is Part 2 of my Posts on Linear Models. In Part 1, I have discussed about Linear Regression as well as Gradient Descent. For Part 1 please click <a href="https://bitmask93.github.io/ml-blog/Linear-Regression&Gradient-Descent/">here</a></p></h3>
 
 <div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595130682/log-lr-gd/0_kzgjdfrlF1kVZr0J_gdpz7k.jpg" /></div>
 
@@ -60,7 +60,7 @@ The loss function over the whole training set is simply the average loss over al
 <div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595131428/log-lr-gd/1_zKrjo8cHg41roHErVwWPog_rkcrer.gif" /></div>
 
 
-Unlike the Linear Regression, there is no closed form/normal equation to find the value of **_w_** that minimizes the loss function. But the function is convex one, so Gradient Descent or any other optimization algorithm is guaranteed to find the global minimum. You can read about Gradient Descent in my blog on [Linear Regression and Gradient Descent](https://bitmask93.github.io/ml-blog/Linear-Regression&Gradient-Descent/).
+Unlike the Linear Regression, there is no closed form/normal equation to find the value of **_w_** that minimizes the loss function. But the function is convex one, so Gradient Descent or any other optimization algorithm is guaranteed to find the global minimum. You can read about Gradient Descent in my post on [Linear Regression and Gradient Descent](https://bitmask93.github.io/ml-blog/Linear-Regression&Gradient-Descent/).
 
 The partial derivative of the loss function with respect to the **_jth_** model parameter **_wj_** is given by:
 
@@ -124,7 +124,7 @@ Here too if we replace the Loss function to MSE, we get Lasso Regression.
 *   Logistic regression assumes linearity of independent variables and log odds. although this analysis does not require the dependent and independent variables to be related linearly, it requires that the independent variables are linearly related to the log odds.
 *   Logistic regression typically requires a large sample size.
 
-Now let us implement Logistic Regression using mini-batch Gradient descent and it’s variations which I have discussed in my blog on Linear Regression, Refer [this](https://bitmask93.github.io/ml-blog/Linear-Regression&Gradient-Descent/).
+Now let us implement Logistic Regression using mini-batch Gradient descent and it’s variations which I have discussed in my post on Linear Regression, Refer [this](https://bitmask93.github.io/ml-blog/Linear-Regression&Gradient-Descent/).
 
 Let’s create a random set of examples:
 {% highlight ruby %}

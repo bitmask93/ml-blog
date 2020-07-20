@@ -2,11 +2,11 @@
 layout: post
 title: Support Vector Machines & Gradient Descent
 date: 2020-06-07 13:32:20 +0300
-description: In this blog, I will discuss Linear SVM using Gradient Descent along with Platt scaling
+description: In this post, I will discuss Linear SVM using Gradient Descent along with Platt scaling
 tags: [Data Science, Machine Learning, Math]
 ---
 
-#### In this blog, I will discuss Linear SVM using Gradient Descent along with Platt scaling
+#### In this post, I will discuss Linear SVM using Gradient Descent along with Platt scaling
 
 <div style="text-align:center"><img src="https://res.cloudinary.com/jithinjayan1993/image/upload/v1595167490/svm-gd/0_HL7VSn9kYGInyy8Y_s9dunp.jpg" /></div>
 
@@ -14,7 +14,7 @@ tags: [Data Science, Machine Learning, Math]
 <div style="text-align:center"><p>Photo by <a href="https://unsplash.com/@charlesdeluvio?utm_source=medium&amp;utm_medium=referral">Charles Deluvio</a> on <a href="https://unsplash.com?utm_source=medium&amp;utm_medium=referral">Unsplash</a></p>
 </div>
 
-This is part 3 of my blogs on Linear Models. In [part 1](https://bitmask93.github.io/ml-blog/Linear-Regression&Gradient-Descent/), I had discussed Linear Regression and Gradient Descent and in [part 2](https://bitmask93.github.io/ml-blog/Logistic-Regression-Gradient-Descent/) I had discussed Logistic Regression and their implementations in Python. In this blog, I will discuss Support Vector Machines (Linear) and its implementation using Gradient Descent.
+This is part 3 of my post on Linear Models. In [part 1](https://bitmask93.github.io/ml-blog/Linear-Regression&Gradient-Descent/), I had discussed Linear Regression and Gradient Descent and in [part 2](https://bitmask93.github.io/ml-blog/Logistic-Regression-Gradient-Descent/) I had discussed Logistic Regression and their implementations in Python. In this post, I will discuss Support Vector Machines (Linear) and its implementation using Gradient Descent.
 
 #### Introduction :
 
